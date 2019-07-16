@@ -19,7 +19,7 @@ Pick your poison...
 
 With the RubyGems CLI package manager:
 
-```Bash
+```
 $ gem install yard_ghurt
 ```
 
@@ -31,7 +31,7 @@ spec.add_development_dependency 'yard_ghurt', '~> X.X.X'
 
 In your *Gemfile*:
 
-```Bash
+```Ruby
 gem 'yard_ghurt', '~> X.X.X', :group => [:development, :test]
 # or...
 gem 'yard_ghurt', :git => 'https://github.com/esotericpig/yard_ghurt.git',
@@ -40,7 +40,7 @@ gem 'yard_ghurt', :git => 'https://github.com/esotericpig/yard_ghurt.git',
 
 Manually:
 
-```Bash
+```
 $ git clone 'https://github.com/esotericpig/yard_ghurt.git'
 $ cd yard_ghurt
 $ bundle install
@@ -66,12 +66,34 @@ These are actual tests for this gem.
 - [This_is_Test_#3](#this_is_test_3)
 - ["This is Test #4"](#this-is-test-4)
 - ["This is Test #4"](#this-is-test-4-1)
+- [日本語？](#日本語)
+- [テスト？](#テスト)
+- [中文？](#中文)
+- [汉语？](#汉语)
 
 ### This is Test #1
 ### This-is-Test-#2
 ### This_is_Test_#3
 ### "This is Test #4"
 ### "This is Test #4"
+### 日本語？
+### テスト？
+### 中文？
+### 汉语？
+
+```
+Newline
+Newline
+Newline
+Newline
+Newline
+Newline
+Newline
+Newline
+Newline
+Newline
+Newline
+```
 
 ## [License](#contents)
 
