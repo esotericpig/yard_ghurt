@@ -45,7 +45,7 @@ module YardGhurt
     
     alias_method :strict?,:strict
     
-    def initialize(name=:yard_ghps)
+    def initialize(name=:yard_ghp_sync)
       @after = nil
       @arg_names = []
       @before = nil
