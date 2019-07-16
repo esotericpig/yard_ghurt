@@ -22,6 +22,7 @@
 
 
 require 'rake'
+
 require 'rake/tasklib'
 
 module YardGhurt
