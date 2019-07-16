@@ -59,12 +59,9 @@ end
 YardGhurt::GFMFixerTask.new() do |task|
   task.arg_names = [:dev]
   task.dry_run = false
-  task.fix_code_class = true
+  task.fix_code_langs = true
   
   task.before = Proc.new() do |task,args|
-    # Delete this file as it's never used (index.html is an exact copy)
-    YardGhurt.rm_exist(File.join(task.doc_dir,'file.README.html'))
-    
     # Root dir of my GitHub Page for CSS/JS
     GHP_ROOT_DIR = args.dev ? '../../esotericpig.github.io' : '../../..'
     

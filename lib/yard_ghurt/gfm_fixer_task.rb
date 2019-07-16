@@ -22,7 +22,11 @@
 
 
 require 'rake'
+require 'set'
+
 require 'rake/tasklib'
+
+require 'yard_ghurt/anchor_links'
 
 module YardGhurt
   ###
@@ -44,7 +48,8 @@ module YardGhurt
     attr_accessor :doc_dir
     attr_accessor :dry_run
     attr_accessor :during
-    attr_accessor :fix_code_class
+    attr_accessor :exclude_code_langs # Case-sensitive
+    attr_accessor :fix_code_langs
     attr_accessor :has_css_comment
     attr_accessor :has_js_comment
     attr_accessor :header_db
@@ -54,7 +59,7 @@ module YardGhurt
     attr_accessor :verbose
     
     alias_method :dry_run?,:dry_run
-    alias_method :fix_code_class?,:fix_code_class
+    alias_method :fix_code_langs?,:fix_code_langs
     alias_method :verbose?,:verbose
     
     def initialize(name=:yard_gfmf)
@@ -69,7 +74,8 @@ module YardGhurt
       @doc_dir = 'doc'
       @dry_run = false
       @during = nil
-      @fix_code_class = false
+      @exclude_code_langs = Set['ruby']
+      @fix_code_langs = false
       @header_db = {}
       @js_scripts = []
       @md_files = ['file.README.html','index.html']
@@ -83,6 +89,9 @@ module YardGhurt
     def reset_per_file()
       @has_css_comment = false
       @has_js_comment = false
+      
+      @anchor_links = AnchorLinks.new()
+      @anchor_links.github_anchor_ids = @header_db.dup()
     end
     
     def define()
@@ -92,10 +101,9 @@ module YardGhurt
         
         @md_files.each do |md_file|
           reset_per_file()
-          build_header_db(md_file)
+          build_anchor_links_db(md_file)
           
           @during.call(self,args) if @during.respond_to?(:call)
-          
           fix_md_file(md_file)
         end
         
@@ -105,7 +113,7 @@ module YardGhurt
       return self
     end
     
-    def build_header_db(md_file)
+    def build_anchor_links_db(md_file)
       filename = File.join(@doc_dir,md_file)
       
       return unless File.exist?(filename)
@@ -115,57 +123,10 @@ module YardGhurt
           next if line !~ /<h\d+>/i
           
           line.gsub!(/<[^>]+>/,'') # Remove tags: <...>
-          line.strip!()
           
-          @header_db[github_anchor_link(line)] = yard_anchor_link(line)
+          @anchor_links << line
         end
       end
-    end
-    
-    # @see https://gist.github.com/asabaylus/3071099#gistcomment-2834467
-    # @see https://github.com/jch/html-pipeline/blob/master/lib/html/pipeline/toc_filter.rb
-    def github_anchor_link(str)
-      str = str.dup()
-      
-      str.gsub!(/&[^;]+;/,'') # Remove entities: &...;
-      str.gsub!(/[^\p{Word}\- ]/u,'')
-      str.tr!(' ','-')
-      
-      if RUBY_VERSION >= '2.4'
-        str.downcase!(:ascii)
-      else
-        str.downcase!()
-      end
-      
-      # Duplicates
-      i = 1
-      original = str.dup()
-      
-      while @header_db.key?(str)
-        str = "#{original}-#{i}"
-        i += 1
-      end
-      
-      return str
-    end
-    
-    # doc/app.js#generateTOC()
-    def yard_anchor_link(str)
-      str = str.dup()
-      
-      str.gsub!(/&[^;]+;/,'_') # Replace entities: &...;
-      str.gsub!(/[^a-z0-9-]/i,'_')
-      
-      # Duplicates
-      i = 0
-      original = str.dup()
-      
-      while @header_db.value?(str)
-        str = "#{original}#{i}"
-        i += 1
-      end
-      
-      return str
     end
     
     def fix_md_file(md_file)
@@ -182,6 +143,8 @@ module YardGhurt
       changes = 0
       lines = []
       
+      puts @anchor_links.yard_anchor_ids
+      
       File.open(filename,'r') do |file|
         file.each_line do |line|
           has_change = false
@@ -190,7 +153,7 @@ module YardGhurt
           has_change = add_css_styles!(line) || has_change
           has_change = add_js_scripts!(line) || has_change
           has_change = gsub_anchor_links!(line) || has_change
-          has_change = gsub_code_classes!(line) || has_change
+          has_change = gsub_code_langs!(line) || has_change
           has_change = gsub_local_file_links!(line) || has_change
           
           # Custom
@@ -276,40 +239,51 @@ module YardGhurt
     
     #task.custom_gsubs = [['href="#This_Is_A_Test"','href="#This-is-a-Test"']]
     def gsub_anchor_links!(line)
+      has_change = false
       tag = 'href="#'
       
-      has_change = line.gsub!(Regexp.new(Regexp.quote(tag) + '[a-z][^"]*"')) do |href|
+      line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |href|
         link = href[tag.length..-2]
         
-        yard_link = @header_db[link]
-        
-        if yard_link.nil?()
-          link = link.split('-').map(&:capitalize).join('_')
+        # FIXME: fix this
+        if @anchor_links.yard_anchor_id?(link)
+          href
         else
-          link = yard_link
+          puts link
+          
+          link = URI.unescape(link) # For non-English languages
+          yard_link = @anchor_links[link]
+          
+          if yard_link.nil?()
+            link = link.split('-').map(&:capitalize).join('_')
+          else
+            link = yard_link
+          end
+          
+          has_change = false
+          
+          %Q(#{tag}#{link}")
         end
-        
-        %Q(#{tag}#{link}")
       end
       
-      return !has_change.nil?()
+      return has_change
     end
     
-    def gsub_code_classes!(line)
-      return false unless @fix_code_class
+    def gsub_code_langs!(line)
+      return false unless @fix_code_langs
       
       has_change = false
       tag = 'code class="'
       
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |code_class|
-        lang = code_class[tag.length..-1]
+        lang = code_class[tag.length..-2]
         
-        if lang =~ /^language\-/
+        if lang =~ /^language\-/ || @exclude_code_langs.include?(lang)
           code_class
         else
           has_change = true
           
-          "#{tag}language-#{lang.downcase()}"
+          %Q(#{tag}language-#{lang.downcase()}")
         end
       end
       

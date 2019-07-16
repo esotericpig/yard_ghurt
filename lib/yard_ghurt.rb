@@ -21,6 +21,7 @@
 #++
 
 
+require 'yard_ghurt/anchor_links'
 require 'yard_ghurt/gfm_fixer_task'
 require 'yard_ghurt/ghp_syncer_task'
 require 'yard_ghurt/version'
