@@ -77,7 +77,7 @@ module YardGhurt
           end
         end
         # Do not check if ghp_dir exists because rsync will create it.
-        if @ghp_dir.nil?() || (@ghp_dir.is_a?(String) && @ghp_dir.strip().empty?())
+        if @ghp_dir.nil?() || @ghp_dir.to_s().strip().empty?()
           raise ArgumentError,"#{self.class}.ghp_dir must be set"
         end
         
