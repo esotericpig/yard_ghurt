@@ -27,10 +27,16 @@ require 'yard_ghurt/ghp_syncer_task'
 require 'yard_ghurt/version'
 
 ###
+# YARDoc GitHub Rake Tasks
+# 
 # @author Jonathan Bradley Whited (@esotericpig)
 # @since  1.0.0
 ###
 module YardGhurt
+  # If +filename+ exists, delete it, and if +output+ is true, log it to stdout.
+  # 
+  # @param filename [String] the file to remove
+  # @param output [true,false] whether to log it to stdout
   def self.rm_exist(filename,output=true)
     return unless File.exist?(filename)
     
