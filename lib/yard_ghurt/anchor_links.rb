@@ -22,6 +22,7 @@
 
 
 require 'set'
+require 'uri'
 
 module YardGhurt
   ###
@@ -44,25 +45,36 @@ module YardGhurt
     end
     
     def <<(name)
-      return add_anchor_name(name)
+      return add_anchor(name)
     end
     
-    def [](github_id)
-      return anchor_id(github_id)
+    def []=(github_anchor_id,yard_anchor_id)
+      return set_anchor(github_anchor_id,yard_anchor_id)
     end
     
-    def add_anchor_name(name)
-      github_id = to_github_anchor_id(name)
-      yard_id = to_yard_anchor_id(name)
-      
-      @github_anchor_ids[github_id] = yard_id
-      @yard_anchor_ids << yard_id
+    def add_anchor(name)
+      set_anchor(to_github_anchor_id(name),to_yard_anchor_id(name))
       
       return self
     end
     
-    def anchor_id(github_id)
-      return @github_anchor_ids[github_id]
+    def set_anchor(github_anchor_id,yard_anchor_id)
+      @github_anchor_ids[github_anchor_id] = yard_anchor_id
+      @yard_anchor_ids << yard_anchor_id
+      
+      return yard_anchor_id
+    end
+    
+    def [](github_anchor_id)
+      return anchor_id(github_anchor_id)
+    end
+    
+    def anchor_id(github_anchor_id)
+      return @github_anchor_ids[github_anchor_id]
+    end
+    
+    def yard_anchor_id?(id)
+      return @yard_anchor_ids.include?(id)
     end
     
     # @see https://gist.github.com/asabaylus/3071099#gistcomment-2834467
@@ -81,6 +93,8 @@ module YardGhurt
         id.downcase!()
       end
       
+      id = URI.escape(id) # For non-English languages
+      
       # Duplicates
       dup_num = 1
       orig_id = id.dup()
@@ -93,6 +107,16 @@ module YardGhurt
       return id
     end
     
+    def to_s()
+      s = ''.dup()
+      
+      @github_anchor_ids.each do |github_id,yard_id|
+        s << "[#{github_id}] => '#{yard_id}'\n"
+      end
+      
+      return s
+    end
+    
     # doc/app.js#generateTOC()
     def to_yard_anchor_id(name)
       id = name.dup()
@@ -100,6 +124,7 @@ module YardGhurt
       id.strip!()
       id.gsub!(/&[^;]+;/,'_') # Replace entities: &...;
       id.gsub!(/[^a-z0-9-]/i,'_')
+      id = URI.escape(id) # For non-English languages
       
       # Duplicates
       orig_id = id.dup()
@@ -110,24 +135,6 @@ module YardGhurt
       end
       
       return id
-    end
-    
-    def github_anchor_id?(id)
-      return @github_anchor_ids.key?(id)
-    end
-    
-    def yard_anchor_id?(id)
-      return @yard_anchor_ids.include?(id)
-    end
-    
-    def to_s()
-      s = ''
-      
-      @github_anchor_ids.each do |github_id,yard_id|
-        s << "[#{github_id}] => [#{yard_id}]"
-      end
-      
-      return s
     end
   end
 end

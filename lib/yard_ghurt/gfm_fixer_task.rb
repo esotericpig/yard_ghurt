@@ -62,7 +62,7 @@ module YardGhurt
     alias_method :fix_code_langs?,:fix_code_langs
     alias_method :verbose?,:verbose
     
-    def initialize(name=:yard_gfmf)
+    def initialize(name=:yard_gfm_fix)
       @after = nil
       @arg_names = []
       @before = nil
@@ -142,8 +142,6 @@ module YardGhurt
       
       changes = 0
       lines = []
-      
-      puts @anchor_links.yard_anchor_ids
       
       File.open(filename,'r') do |file|
         file.each_line do |line|
@@ -245,24 +243,20 @@ module YardGhurt
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |href|
         link = href[tag.length..-2]
         
-        # FIXME: fix this
         if @anchor_links.yard_anchor_id?(link)
           href
         else
-          puts link
-          
-          link = URI.unescape(link) # For non-English languages
           yard_link = @anchor_links[link]
           
           if yard_link.nil?()
-            link = link.split('-').map(&:capitalize).join('_')
+            puts "! Anchor link [#{link}] does not exist; internal code is broken?"
+            
+            href
           else
-            link = yard_link
+            has_change = true
+            
+            %Q(#{tag}#{yard_link}")
           end
-          
-          has_change = false
-          
-          %Q(#{tag}#{link}")
         end
       end
       
