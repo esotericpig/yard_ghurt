@@ -19,9 +19,7 @@ Pick your poison...
 
 With the RubyGems CLI package manager:
 
-```
-$ gem install yard_ghurt
-```
+`$ gem install yard_ghurt`
 
 In your *Gemspec* (*&lt;project&gt;.gemspec*):
 
@@ -66,20 +64,24 @@ These are actual tests for this gem.
 - [This_is_Test_#3](#this_is_test_3)
 - ["This is Test #4"](#this-is-test-4)
 - ["This is Test #4"](#this-is-test-4-1)
+- [this is test #5](#this-is-test-5)
+- [THIS IS TEST #6](#this-is-test-6)
 - [日本語？](#日本語)
 - [テスト？](#テスト)
 - [中文？](#中文)
 - [汉语？](#汉语)
 
-### This is Test #1
-### This-is-Test-#2
-### This_is_Test_#3
-### "This is Test #4"
-### "This is Test #4"
-### 日本語？
-### テスト？
-### 中文？
-### 汉语？
+### [This is Test #1](#tests)
+### [This-is-Test-#2](#tests)
+### [This_is_Test_#3](#tests)
+### ["This is Test #4"](#tests)
+### ["This is Test #4"](#tests)
+### [this is test #5](#tests)
+### [THIS IS TEST #6](#tests)
+### [日本語？](#tests)
+### [テスト？](#tests)
+### [中文？](#tests)
+### [汉语？](#tests)
 
 ```
 Newline
