@@ -26,20 +26,20 @@ require 'yard'
 require 'yard_ghurt'
 
 require 'rake/clean'
-require 'rake/testtask'
+#require 'rake/testtask'
 
-task default: [:test]
+task default: [:yard,:yard_gfm_fix]
 
 CLEAN.exclude('.git/','stock/')
 CLOBBER.include('doc/')
 
-Rake::TestTask.new() do |task|
-  task.libs = ['lib','test']
-  task.pattern = 'test/**/*_test.rb'
-  task.description += " ('#{task.pattern}')"
-  task.verbose = true
-  task.warning = true
-end
+#Rake::TestTask.new() do |task|
+#  task.libs = ['lib','test']
+#  task.pattern = 'test/**/*_test.rb'
+#  task.description += " ('#{task.pattern}')"
+#  task.verbose = true
+#  task.warning = true
+#end
 
 YARD::Rake::YardocTask.new() do |task|
   task.files = ['lib/**/*.rb']
@@ -53,7 +53,7 @@ YARD::Rake::YardocTask.new() do |task|
 end
 
 desc 'Generate pristine YARDoc'
-task :yard_fresh => [:clobber,:yard,:yard_gfmf] do |task|
+task :yard_fresh => [:clobber,:yard,:yard_gfm_fix] do |task|
 end
 
 YardGhurt::GFMFixerTask.new() do |task|
