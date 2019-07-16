@@ -10,6 +10,7 @@
 - [Setup](#setup)
 - [Using](#using)
 - [Hacking](#hacking)
+    - [Testing](#testing)
 - [Tests](#tests)
 - [License](#license)
 
@@ -54,6 +55,31 @@ $ git clone 'https://github.com/esotericpig/yard_ghurt.git'
 $ bundle install
 $ bundle exec rake -T
 ```
+
+### [Testing](#hacking)
+
+First, execute this:
+
+`$ bundle exec rake clobber yard yard_gfm_fix[true]`
+
+Then execute this and make sure there are no warnings and no changes:
+
+`$ bundle exec rake yard_gfm_fix[true]`
+
+It should output this:
+
+```
+[doc/file.README.html]:
+= Nothing written (up-to-date)
+[doc/index.html]:
+= Nothing written (up-to-date)
+```
+
+Then open up **doc/index.html** and check all of  the [anchor links](#tests), [local file links](#license), etc.
+
+Lastly, the 2 files should be almost identical, except for 1 line:
+
+`$ diff doc/index.html doc/file.README.html`
 
 ## [Tests](#contents)
 
