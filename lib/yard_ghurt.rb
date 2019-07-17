@@ -33,6 +33,9 @@ require 'yard_ghurt/version'
 # @since  1.0.0
 ###
 module YardGhurt
+  # @return [Array<String>] the lower-case Strings that will equal to +true+
+  TRUE_BOOLS = ['1','on','t','true','y','yes'].freeze()
+  
   # If +filename+ exists, delete it, and if +output+ is true, log it to stdout.
   # 
   # @param filename [String] the file to remove
@@ -42,5 +45,19 @@ module YardGhurt
     
     puts "[#{filename}]: - Deleted" if output
     File.delete(filename)
+  end
+  
+  # Convert +str+ to +true+ or +false+.
+  # 
+  # Even if +str+ is not a String, +to_s()+ will be called, so should be safe.
+  # 
+  # @param str [String,Object] the String (or Object) to convert
+  # 
+  # @return [true,false] the boolean value of +str+
+  # 
+  # @see TRUE_BOOLS
+  # @see GHPSyncerTask#arg_names
+  def self.to_bool(str)
+    return TRUE_BOOLS.include?(str.to_s().downcase())
   end
 end
