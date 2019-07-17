@@ -63,7 +63,7 @@ YardGhurt::GFMFixerTask.new() do |task|
   
   task.before = Proc.new() do |task,args|
     # Root dir of my GitHub Page for CSS/JS
-    GHP_ROOT_DIR = args.dev ? '../../esotericpig.github.io' : '../../..'
+    GHP_ROOT_DIR = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
     
     task.css_styles << %Q(<link href="#{GHP_ROOT_DIR}/css/prism.css" rel="stylesheet" />)
     task.js_scripts << %Q(<script src="#{GHP_ROOT_DIR}/js/prism.js"></script>)
