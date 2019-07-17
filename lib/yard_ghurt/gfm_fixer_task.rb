@@ -49,7 +49,9 @@ module YardGhurt
     attr_accessor :dry_run
     attr_accessor :during
     attr_accessor :exclude_code_langs # Case-sensitive
+    attr_accessor :fix_anchor_links
     attr_accessor :fix_code_langs
+    attr_accessor :fix_file_links
     attr_accessor :has_css_comment
     attr_accessor :has_js_comment
     attr_accessor :header_db
@@ -75,7 +77,9 @@ module YardGhurt
       @dry_run = false
       @during = nil
       @exclude_code_langs = Set['ruby']
+      @fix_anchor_links = true
       @fix_code_langs = false
+      @fix_file_links = true
       @header_db = {}
       @js_scripts = []
       @md_files = ['file.README.html','index.html']
@@ -96,7 +100,7 @@ module YardGhurt
     
     def define()
       desc @description
-      task @name,@arg_names => @deps do |task,args|
+      task @name,Array(@arg_names) => Array(@deps) do |task,args|
         @before.call(self,args) if @before.respond_to?(:call)
         
         @md_files.each do |md_file|
@@ -186,7 +190,7 @@ module YardGhurt
     end
     
     def add_css_styles!(line)
-      return false if @has_css_comment
+      return false if @has_css_comment || @css_styles.empty?()
       
       if line.strip() == CSS_COMMENT
         @has_css_comment = true
@@ -211,7 +215,7 @@ module YardGhurt
     end
     
     def add_js_scripts!(line)
-      return false if @has_js_comment
+      return false if @has_js_comment || @js_scripts.empty?()
       
       if line.strip() == JS_COMMENT
         @has_js_comment = true
@@ -237,6 +241,8 @@ module YardGhurt
     
     #task.custom_gsubs = [['href="#This_Is_A_Test"','href="#This-is-a-Test"']]
     def gsub_anchor_links!(line)
+      return false unless @fix_anchor_links
+      
       has_change = false
       tag = 'href="#'
       
@@ -249,7 +255,9 @@ module YardGhurt
           yard_link = @anchor_links[link]
           
           if yard_link.nil?()
-            puts "! Anchor link [#{link}] does not exist; internal code is broken?"
+            # Either the GFM link is wrong [check with @anchor_links.to_github_anchor_id()]
+            #   or the internal code is broken [check with @anchor_links.to_s()]
+            puts "! YARDoc anchor link [#{link}] does not exist; GFM anchor link is wrong?"
             
             href
           else
@@ -290,6 +298,8 @@ module YardGhurt
     end
     
     def gsub_customs!(line)
+      return false if @custom_gsubs.empty?()
+      
       has_change = false
       
       @custom_gsubs.each do |custom_gsub|
@@ -300,6 +310,8 @@ module YardGhurt
     end
     
     def gsub_local_file_links!(line)
+      return false unless @fix_file_links
+      
       has_change = false
       tag = 'href="'
       
