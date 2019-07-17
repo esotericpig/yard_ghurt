@@ -3,7 +3,7 @@
 <u>YARD</u>oc <u>G</u>it<u>Hu</u>b <u>R</u>ake <u>T</u>asks
 
 - Fix GitHub Flavored Markdown files.
-- Sync YARDoc to GitHub Pages repo.
+- Sync YARDoc to a local GitHub Pages repo.
 
 ## Contents
 
