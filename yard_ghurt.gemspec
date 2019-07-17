@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.licenses    = ['LGPL-3.0-or-later']
   spec.homepage    = 'https://github.com/esotericpig/yard_ghurt'
   spec.summary     = 'YARDoc GitHub Rake Tasks'
-  spec.description = 'YARDoc GitHub Rake Tasks. Fix GitHub Flavored Markdown files.'
+  spec.description = 'YARDoc GitHub Rake Tasks. Fix GitHub Flavored Markdown (GFM) files.'
   
   spec.metadata = {
     'bug_tracker_uri'   => 'https://github.com/esotericpig/yard_ghurt/issues',
