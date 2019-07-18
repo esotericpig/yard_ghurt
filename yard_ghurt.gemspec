@@ -43,10 +43,10 @@ Gem::Specification.new do |spec|
     'source_code_uri'   => 'https://github.com/esotericpig/yard_ghurt'
   }
   
-  spec.files = Dir.glob(File.join('{lib,test,yard}','**','*.{erb,rb}')) +
+  spec.require_paths = ['lib']
+  spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')},test,yard}",'**','*.{erb,rb}')) +
                %w( Gemfile Rakefile yard_ghurt.gemspec ) +
                %w( CHANGELOG.md LICENSE.txt README.md )
-  spec.require_paths = ['lib']
   
   spec.required_ruby_version = '>= 2.1.10'
   
