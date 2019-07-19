@@ -78,7 +78,7 @@ module YardGhurt
   ###
   class AnchorLinks
     # @return [Hash] the GFM-style anchor IDs pointing to their YARDoc ID equivalents that have been added
-    attr_accessor :github_anchor_ids
+    attr_reader :anchor_ids
     
     # @return [Set] the YARDoc anchor IDs that have been added
     attr_accessor :yard_anchor_ids
@@ -93,7 +93,7 @@ module YardGhurt
     # Reset the database back to its fresh, pristine self,
     # including common numbers for duplicates.
     def reset()
-      @github_anchor_ids = {}
+      @anchor_ids = {}
       @yard_anchor_ids = Set.new()
       @yard_dup_num = 0
     end
@@ -119,6 +119,13 @@ module YardGhurt
       return self
     end
     
+    def merge_anchor_ids!(anchor_ids)
+      @anchor_ids.merge!(anchor_ids)
+      @yard_anchor_ids.merge(anchor_ids.values)
+      
+      return @anchor_ids
+    end
+    
     # Store & associate key +github_anchor_id+ with value +yard_anchor_id+,
     # and add +yard_anchor_id+ to the YARDoc anchor IDs.
     # 
@@ -127,10 +134,17 @@ module YardGhurt
     # 
     # @return [String] the +yard_anchor_id+ added
     def store_anchor(github_anchor_id,yard_anchor_id)
-      @github_anchor_ids[github_anchor_id] = yard_anchor_id
+      @anchor_ids[github_anchor_id] = yard_anchor_id
       @yard_anchor_ids << yard_anchor_id
       
       return yard_anchor_id
+    end
+    
+    def anchor_ids=(anchor_ids)
+      @anchor_ids = anchor_ids
+      @yard_anchor_ids.merge(anchor_ids.values)
+      
+      return @anchor_ids
     end
     
     # (see #anchor_id)
@@ -144,7 +158,7 @@ module YardGhurt
     # 
     # @return [String,nil] the YARDoc anchor ID associated with +github_anchor_id+
     def anchor_id(github_anchor_id)
-      return @github_anchor_ids[github_anchor_id]
+      return @anchor_ids[github_anchor_id]
     end
     
     # Check if +id+ exists in the database of YARDoc anchor IDs
@@ -187,7 +201,7 @@ module YardGhurt
       dup_num = 1
       orig_id = id.dup()
       
-      while @github_anchor_ids.key?(id)
+      while @anchor_ids.key?(id)
         id = "#{orig_id}-#{dup_num}"
         dup_num += 1
       end
@@ -201,7 +215,7 @@ module YardGhurt
     def to_s()
       s = ''.dup()
       
-      @github_anchor_ids.each do |github_id,yard_id|
+      @anchor_ids.each do |github_id,yard_id|
         s << "[#{github_id}] => '#{yard_id}'\n"
       end
       
