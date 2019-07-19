@@ -34,30 +34,175 @@ module YardGhurt
   # @since  1.0.0
   ###
   class GFMFixerTask < Rake::TaskLib
+    # This is important so that a subsequent call to this task will not write the CSS again.
+    # 
+    # @return [String] the comment tag of where to place {css_styles}
+    # 
+    # @see add_css_styles!
     CSS_COMMENT = "<!-- #{self} CSS - Do NOT remove this comment! -->"
+    
+    # This is important so that a subsequent call to this task will not write the JS again.
+    # 
+    # @return [String] the comment tag of where to place {js_scripts}
+    # 
+    # @see add_js_scripts!
     JS_COMMENT = "<!-- #{self} JS - Do NOT remove this comment! -->"
     
+    # @example
+    #   task.arg_names = [:dev]
+    #   
+    #   # @param task [self]
+    #   # @param args [Rake::TaskArguments] the args specified by {arg_names}
+    #   task.after = Proc.new do |task,args|
+    #     puts args.dev
+    #   end
+    # 
+    # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the end of this task or +nil+;
+    #                    default: +nil+
     attr_accessor :after
+    
+    # 
+    # 
+    # @return [Hash] the custom database (key-value pairs) of GFM anchor links to YARDoc anchor links;
+    #                default: +{}+
+    attr_accessor :anchor_db
+    
+    # @return [Array<Symbol>,Symbol] the custom arg(s) for this task; default: +[]+
     attr_accessor :arg_names
+    
+    # @example
+    #   task.arg_names = [:dev]
+    #   
+    #   # @param task [self]
+    #   # @param args [Rake::TaskArguments] the args specified by {arg_names}
+    #   task.before = Proc.new do |task,args|
+    #     puts args.dev
+    #   end
+    # 
+    # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the beginning of this task or +nil+;
+    #                    default: +nil+
     attr_accessor :before
+    
+    # @example
+    #   task.css_styles << '<link href="css/prism.css" rel="stylesheet" />'
+    # 
+    # @return [Array<String>] the CSS styles to add to each file; default: +[]+
     attr_accessor :css_styles
+    
+    # @example
+    #   # +gsub!()+ (and other mutable methods) must be used
+    #   # as the return value must be +true+ or +false+.
+    #   # 
+    #   # @param line [String] the current line being processed from the current file
+    #   # 
+    #   # @return [true,false] whether there was a change
+    #   task.custom_gsub = Proc.new do |line|
+    #     has_change = false
+    #     
+    #     has_change = !line.gsub!('dev','prod').nil?() || has_change
+    #     # More changes...
+    #     
+    #     return has_change
+    #   end
+    # 
+    # @return [Proc,nil] the custom Proc ( +respond_to?(:call)+ ) to call to gsub! each line for each file
     attr_accessor :custom_gsub
-    attr_accessor :custom_gsubs # [['href="#This_Is_A_Test"','href="#This-is-a-Test"']]
+    
+    # @example
+    #   task.custom_gsubs = [
+    #     ['dev','prod'],
+    #     [/href="#[^"]*"/,'href="#contents"']
+    #   ]
+    #   
+    #   # Internal code:
+    #   # ---
+    #   # @custom_gsubs.each do |custom_gsub|
+    #   #   line.gsub!(custom_gsub[0],custom_gsub[1])
+    #   # end
+    # 
+    # @return [Array<[Regexp,String]>,Array<[String,String]>] the custom args to use in gsub
+    #                                                         on each line for each file
+    attr_accessor :custom_gsubs
+    
+    # @example
+    #   task.deps = :yard
+    #   # or...
+    #   task.deps = [:clobber,:yard]
+    # 
+    # @return [Array<Symbol>,Symbol] the custom dependencies for this task; default: +[]+
     attr_accessor :deps
+    
+    # @return [String] the description of this task (customizable)
     attr_accessor :description
+    
+    # @return [String] the directory of generated YARDoc files; default: +doc+
     attr_accessor :doc_dir
+    
+    # @return [true,false] whether to run a dry-run (no writing to the files); default: +false+
     attr_accessor :dry_run
+    
+    # @example
+    #   task.arg_names = [:dev]
+    #   
+    #   # @param task [self]
+    #   # @param args [Rake::TaskArguments] args specified with {arg_names}
+    #   # @param file [String] the current file being processed
+    #   task.during = Proc.new do |task,args,file|
+    #     puts args.dev
+    #   end
+    # 
+    # @return [Proc,nil] the Proc to call ( +respond_to?(:call)+ ) at the beginning of processing
+    #                    each file or +nil+; default: +nil+
     attr_accessor :during
-    attr_accessor :exclude_code_langs # Case-sensitive
+    
+    # @return [Set<String>] the case-sensitive code languages to not fix; default: +Set[ 'ruby' ]+
+    # 
+    # @see fix_code_langs
+    attr_accessor :exclude_code_langs
+    
+    # @return [true,false] whether to fix anchor links; default: +true+
     attr_accessor :fix_anchor_links
+    
+    # If +true+, +language-+ will be added to code classes, except for {exclude_code_langs}.
+    # 
+    # For example, +code class="ruby"+ will be changed to +code class="language-ruby"+.
+    # 
+    # @return [true,false] whether to fix code languages; default: +false+
     attr_accessor :fix_code_langs
+    
+    # If +true+, local file links (if the local file exists), will be changed to +file.{filename}.html+.
+    # 
+    # This is useful for +README.md+, +LICENSE.txt+, etc.
+    # 
+    # @return [true,false] whether to fix local file links; default: +true+
     attr_accessor :fix_file_links
+    
+    # This is an internal flag meant to be changed internally.
+    # 
+    # @return [true,false] whether {CSS_COMMENT} has been seen/added; default: +false+
+    # 
+    # @see add_css_styles!
     attr_accessor :has_css_comment
+    
+    # This is an internal flag meant to be changed internally.
+    # 
+    # @return [true,false] whether {JS_COMMENT} has been seen/added; default: +false+
+    # 
+    # @see add_js_scripts!
     attr_accessor :has_js_comment
-    attr_accessor :header_db
+    
+    # @example
+    #   task.js_scripts << '<script src="js/prism.js"></script>'
+    # @return [Array<String>] the CSS styles to add to each file; default: +[]+
     attr_accessor :js_scripts
+    
+    # @return [Array<String>] the (GFM) Markdown files to fix; default: +['file.README.html','index.html']+
     attr_accessor :md_files
+    
+    # @return [String] the name of this task (customizable); default: +yard_gfm_fix+
     attr_accessor :name
+    
+    # @return [true,false] whether to puts() each change to stdout; default: +true+
     attr_accessor :verbose
     
     alias_method :dry_run?,:dry_run
@@ -66,6 +211,7 @@ module YardGhurt
     
     def initialize(name=:yard_gfm_fix)
       @after = nil
+      @anchor_db = {}
       @arg_names = []
       @before = nil
       @css_styles = []
@@ -80,7 +226,6 @@ module YardGhurt
       @fix_anchor_links = true
       @fix_code_langs = false
       @fix_file_links = true
-      @header_db = {}
       @js_scripts = []
       @md_files = ['file.README.html','index.html']
       @name = name
@@ -91,11 +236,9 @@ module YardGhurt
     end
     
     def reset_per_file()
+      @anchor_links = AnchorLinks.new()
       @has_css_comment = false
       @has_js_comment = false
-      
-      @anchor_links = AnchorLinks.new()
-      @anchor_links.github_anchor_ids = @header_db.dup()
     end
     
     def define()
@@ -107,7 +250,8 @@ module YardGhurt
           reset_per_file()
           build_anchor_links_db(md_file)
           
-          @during.call(self,args) if @during.respond_to?(:call)
+          @during.call(self,args,md_file) if @during.respond_to?(:call)
+          
           fix_md_file(md_file)
         end
         
@@ -131,6 +275,8 @@ module YardGhurt
           @anchor_links << line
         end
       end
+      
+      @anchor_links.merge_anchor_ids!(@anchor_db)
     end
     
     def fix_md_file(md_file)
@@ -258,6 +404,8 @@ module YardGhurt
             # Either the GFM link is wrong [check with @anchor_links.to_github_anchor_id()]
             #   or the internal code is broken [check with @anchor_links.to_s()]
             puts "! YARDoc anchor link [#{link}] does not exist; GFM anchor link is wrong?"
+            # TODO: if not verbose, output to turn on verbose for more info
+            #       if verbose, output @anchor_links once (store boolean)
             
             href
           else
