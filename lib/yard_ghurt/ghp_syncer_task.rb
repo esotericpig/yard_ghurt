@@ -55,7 +55,7 @@ module YardGhurt
   # @since  1.0.0
   ###
   class GHPSyncerTask < Rake::TaskLib
-    # @return [Proc,nil] the Proc to call ( +respond_to?(:call)+ ) at the end of this task or +nil+;
+    # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the end of this task or +nil+;
     #                    default: +nil+
     attr_accessor :after
     
@@ -63,7 +63,7 @@ module YardGhurt
     # @return [Array<Symbol>,Symbol] the custom arg(s) for this task; default: +[:deploy]+
     attr_accessor :arg_names
     
-    # @return [Proc,nil] the Proc to call ( +respond_to?(:call)+ ) at the beginning of this task or +nil+;
+    # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the beginning of this task or +nil+;
     #                    default: +nil+
     attr_accessor :before
     
