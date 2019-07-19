@@ -35,20 +35,20 @@ CLOBBER.include('doc/')
 
 #Rake::TestTask.new() do |task|
 #  task.libs = ['lib','test']
-#  task.pattern = 'test/**/*_test.rb'
+#  task.pattern = File.join('test','**','*_test.rb')
 #  task.description += " ('#{task.pattern}')"
 #  task.verbose = true
 #  task.warning = true
 #end
 
 YARD::Rake::YardocTask.new() do |task|
-  task.files = ['lib/**/*.rb']
+  task.files = [File.join('lib','**','*.rb')]
   
   task.options += ['--files','CHANGELOG.md,LICENSE.txt']
   task.options += ['--readme','README.md']
   
   task.options << '--protected' # Show protected methods
-  task.options += ['--template-path','yard/templates/']
+  task.options += ['--template-path',File.join('yard','templates')]
   task.options += ['--title',"YardGhurt v#{YardGhurt::VERSION} Doc"]
 end
 
