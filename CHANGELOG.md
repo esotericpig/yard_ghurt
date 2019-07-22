@@ -4,12 +4,19 @@ Format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.0.0...master)
 
-## [v1.0.0] - 2019-XX-XX
-
-## [v0.0.0] - XXXX-XX-XX
+## [v1.0.0] - 2019-07-23
 ### Added
-### Changed
-### Deprecated
-### Removed
-### Fixed
-### Security
+- .gitignore
+- CHANGELOG.md
+- Gemfile
+- LICENSE.txt
+- README.md
+- Rakefile
+- yard_ghurt.gemspec
+- lib/yard_ghurt.rb
+- lib/yard_ghurt/anchor_links.rb
+- lib/yard_ghurt/gfm_fixer_task.rb
+- lib/yard_ghurt/ghp_syncer_task.rb
+- lib/yard_ghurt/util.rb
+- lib/yard_ghurt/version.rb
+- yard/templates/default/layout/html/footer.erb
