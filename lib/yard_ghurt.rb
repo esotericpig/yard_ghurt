@@ -34,5 +34,8 @@ require 'yard_ghurt/version'
 # @since  1.0.0
 ###
 module YardGhurt
+  # Internal code should use +Util.+!
+  # External code should use +YardGhurt.+, but can also use +YardGhurt::Util.+.
+  # See {Util} for details.
   include Util
 end
