@@ -60,6 +60,7 @@ module YardGhurt
     attr_accessor :after
     
     # @note +:deploy+ will be added no matter what (cannot be deleted)
+    # 
     # @return [Array<Symbol>,Symbol] the custom arg(s) for this task; default: +[:deploy]+
     attr_accessor :arg_names
     
@@ -71,6 +72,7 @@ module YardGhurt
     #   task.deps = :yard
     #   # or...
     #   task.deps = [:yard,:yard_gfm_fix]
+    # 
     # @return [Array<Symbol>,Symbol] the custom dependencies for this task; default: +[]+
     attr_accessor :deps
     
@@ -81,6 +83,7 @@ module YardGhurt
     attr_accessor :doc_dir
     
     # @note You must set this, else an error is thrown.
+    # 
     # @return [String] the destination directory to sync {doc_dir} to
     attr_accessor :ghp_dir
     
@@ -94,6 +97,7 @@ module YardGhurt
     
     # @note You should pass in multi-args separately: +['--exclude','*~']+
     # @note You should not single/double quote the args; +['"*~"']+ is unnecessary.
+    # 
     # @return [Array<String>] the args to pass to the {sync_cmd}; default: +['-ahv','--progress']+
     attr_accessor :sync_args
     
