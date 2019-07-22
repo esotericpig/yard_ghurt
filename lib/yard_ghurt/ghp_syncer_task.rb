@@ -25,6 +25,8 @@ require 'rake'
 
 require 'rake/tasklib'
 
+require 'yard_ghurt/util'
+
 module YardGhurt
   ###
   # Sync YARDoc to a local GitHub Pages repo (uses +rsync+ by default).
@@ -131,7 +133,7 @@ module YardGhurt
       
       desc @description
       task @name,@arg_names => Array(@deps) do |task,args|
-        deploy = YardGhurt.to_bool(args.deploy)
+        deploy = Util.to_bool(args.deploy)
         
         @before.call(self,args) if @before.respond_to?(:call)
         
