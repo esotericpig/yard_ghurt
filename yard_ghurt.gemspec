@@ -25,7 +25,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'yard_ghurt/version'
 
-Gem::Specification.new do |spec|
+Gem::Specification.new() do |spec|
   spec.name        = 'yard_ghurt'
   spec.version     = YardGhurt::VERSION
   spec.authors     = ['Jonathan Bradley Whited (@esotericpig)']
@@ -44,8 +44,9 @@ Gem::Specification.new do |spec|
   }
   
   spec.require_paths = ['lib']
+  
   spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')},test,yard}",'**','*.{erb,rb}')) +
-               %w( Gemfile Rakefile yard_ghurt.gemspec ) +
+               %W( Gemfile #{spec.name}.gemspec Rakefile ) +
                %w( CHANGELOG.md LICENSE.txt README.md )
   
   spec.required_ruby_version = '>= 2.1.10'
@@ -53,7 +54,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'rake' #,'~> 12.3'
   
   spec.add_development_dependency 'bundler'  ,'~> 1.17'
-  #spec.add_development_dependency 'minitest' ,'~> 5.11' # For testing
   spec.add_development_dependency 'rdoc'     ,'~> 6.1'  # For RDoc for YARD (*.rb)
   spec.add_development_dependency 'redcarpet','~> 3.4'  # For Markdown for YARD (*.md)
   spec.add_development_dependency 'yard'     ,'~> 0.9'

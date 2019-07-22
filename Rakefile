@@ -26,20 +26,11 @@ require 'yard'
 require 'yard_ghurt'
 
 require 'rake/clean'
-#require 'rake/testtask'
 
 task default: [:yard,:yard_gfm_fix]
 
 CLEAN.exclude('.git/','stock/')
 CLOBBER.include('doc/')
-
-#Rake::TestTask.new() do |task|
-#  task.libs = ['lib','test']
-#  task.pattern = File.join('test','**','*_test.rb')
-#  task.description += " ('#{task.pattern}')"
-#  task.verbose = true
-#  task.warning = true
-#end
 
 YARD::Rake::YardocTask.new() do |task|
   task.files = [File.join('lib','**','*.rb')]
@@ -65,7 +56,7 @@ YardGhurt::GFMFixerTask.new() do |task|
     # Root dir of my GitHub Page for CSS/JS
     GHP_ROOT_DIR = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
     
-    task.css_styles << %Q(<link href="#{GHP_ROOT_DIR}/css/prism.css" rel="stylesheet" />)
+    task.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{GHP_ROOT_DIR}/css/prism.css" />)
     task.js_scripts << %Q(<script src="#{GHP_ROOT_DIR}/js/prism.js"></script>)
   end
 end
