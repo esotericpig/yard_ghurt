@@ -218,8 +218,8 @@ module YardGhurt
     def to_s()
       s = ''.dup()
       
-      @anchor_ids.each do |github_id,yard_id|
-        s << "[#{github_id}] => '#{yard_id}'\n"
+      @anchor_ids.keys.sort_by{|key| key.to_s()}.each do |key|
+        s << "[#{key}] => '#{@anchor_ids[key]}'\n"
       end
       
       return s
