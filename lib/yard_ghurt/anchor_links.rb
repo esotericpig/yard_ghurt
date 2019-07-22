@@ -119,6 +119,9 @@ module YardGhurt
       return self
     end
     
+    # Merge +anchor_ids+ with {anchor_ids} and {yard_anchor_ids}.
+    # 
+    # @param anchor_ids [Hash] the anchor IDs (of GFM anchor IDs to YARDoc anchor IDs) to merge
     def merge_anchor_ids!(anchor_ids)
       @anchor_ids.merge!(anchor_ids)
       @yard_anchor_ids.merge(anchor_ids.values)
