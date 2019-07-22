@@ -77,16 +77,18 @@ module YardGhurt
     # @return [String] the description of this task (customizable)
     attr_accessor :description
     
-    # @return [String] the directory of generated YARDoc files; default: +doc+
+    # @return [String] the source directory of generated YARDoc files; default: +doc+
     attr_accessor :doc_dir
     
     # @note You must set this, else an error is thrown.
-    # @return [String] the directory to sync {doc_dir} to
+    # @return [String] the destination directory to sync {doc_dir} to
     attr_accessor :ghp_dir
     
     # @return [String] the name of this task (customizable); default: +yard_ghp_sync+
     attr_accessor :name
     
+    # If you want to use a non-local {doc_dir} (a remote host), set this to +false+.
+    # 
     # @return [true,false] whether to throw an error if {doc_dir} does not exist; default: +true+
     attr_accessor :strict
     
