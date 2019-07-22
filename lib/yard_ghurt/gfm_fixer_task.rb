@@ -30,6 +30,54 @@ require 'yard_ghurt/anchor_links'
 
 module YardGhurt
   ###
+  # Fix (find & replace) text in the GitHub Flavored Markdown (GFM) files in the YARDoc directory,
+  # for differences between the two formats.
+  # 
+  # @example What I Use
+  #   YardGhurt::GFMFixerTask.new() do |task|
+  #     task.arg_names = [:dev]
+  #     task.dry_run = false
+  #     task.fix_code_langs = true
+  #     task.md_files = ['index.html']
+  #     
+  #     task.before = Proc.new() do |task,args|
+  #       # Delete this file as it's never used (index.html is an exact copy)
+  #       YardGhurt.rm_exist(File.join(task.doc_dir,'file.README.html'))
+  #       
+  #       # Root dir of my GitHub Page for CSS/JS
+  #       GHP_ROOT_DIR = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
+  #       
+  #       task.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{GHP_ROOT_DIR}/css/prism.css" />)
+  #       task.js_scripts << %Q(<script src="#{GHP_ROOT_DIR}/js/prism.js"></script>)
+  #     end
+  #   end
+  # 
+  # @example Using All Options
+  #   YardGhurt::GFMFixerTask.new(:yard_fix) do |task|
+  #     task.anchor_db           = {'tests' => 'Testing'} # #tests => #Testing
+  #     task.arg_names          << :name # Custom args
+  #     task.css_styles         << '<link rel="stylesheet" href="css/my_css.css" />' # Inserted at </head>
+  #     task.css_styles         << '<style>body{ background-color: linen; }</style>'
+  #     task.custom_gsub         = Proc.new() {|line| !line.gsub!('YardGhurt','YARD GHURT!').nil?()}
+  #     task.custom_gsubs       << [/newline/i,'Do you smell what The Rock is cooking?']
+  #     task.deps               << :yard # Custom dependencies
+  #     task.description         = 'Fix it'
+  #     task.doc_dir             = 'doc'
+  #     task.dry_run             = false
+  #     task.exclude_code_langs  = Set['ruby']
+  #     task.fix_anchor_links    = true
+  #     task.fix_code_langs      = true
+  #     task.fix_file_links      = true
+  #     task.js_scripts         << '<script src="js/my_js.js"></script>' # Inserted at </body>
+  #     task.js_scripts         << '<script>document.write("Hello World!");</script>'
+  #     task.md_files            = ['index.html']
+  #     task.verbose             = false
+  #     
+  #     task.before = Proc.new() {|task,args| puts "Hi, #{args.name}!"}
+  #     task.during = Proc.new() {|task,args,file| puts "#{args.name} can haz #{file}?"}
+  #     task.after  = Proc.new() {|task,args| puts "Goodbye, #{args.name}!"}
+  #   end
+  # 
   # @author Jonathan Bradley Whited (@esotericpig)
   # @since  1.0.0
   ###
@@ -61,10 +109,15 @@ module YardGhurt
     #                    default: +nil+
     attr_accessor :after
     
+    # The anchor links to override in the database.
     # 
+    # The keys are GFM anchor IDs and the values are their equivalent YARDoc anchor IDs.
     # 
     # @return [Hash] the custom database (key-value pairs) of GFM anchor links to YARDoc anchor links;
     #                default: +{}+
+    # 
+    # @see build_anchor_links_db
+    # @see AnchorLinks#merge_anchor_ids!
     attr_accessor :anchor_db
     
     # @return [Array<Symbol>,Symbol] the custom arg(s) for this task; default: +[]+
@@ -84,7 +137,7 @@ module YardGhurt
     attr_accessor :before
     
     # @example
-    #   task.css_styles << '<link href="css/prism.css" rel="stylesheet" />'
+    #   task.css_styles << '<link rel="stylesheet" type="text/css" href="css/prism.css" />'
     # 
     # @return [Array<String>] the CSS styles to add to each file; default: +[]+
     attr_accessor :css_styles
@@ -120,8 +173,7 @@ module YardGhurt
     #   #   line.gsub!(custom_gsub[0],custom_gsub[1])
     #   # end
     # 
-    # @return [Array<[Regexp,String]>,Array<[String,String]>] the custom args to use in gsub
-    #                                                         on each line for each file
+    # @return [Array<[Regexp,String]>] the custom args to use in gsub on each line for each file
     attr_accessor :custom_gsubs
     
     # @example
@@ -138,14 +190,14 @@ module YardGhurt
     # @return [String] the directory of generated YARDoc files; default: +doc+
     attr_accessor :doc_dir
     
-    # @return [true,false] whether to run a dry-run (no writing to the files); default: +false+
+    # @return [true,false] whether to run a dry run (no writing to the files); default: +false+
     attr_accessor :dry_run
     
     # @example
     #   task.arg_names = [:dev]
     #   
     #   # @param task [self]
-    #   # @param args [Rake::TaskArguments] args specified with {arg_names}
+    #   # @param args [Rake::TaskArguments] the args specified by {arg_names}
     #   # @param file [String] the current file being processed
     #   task.during = Proc.new do |task,args,file|
     #     puts args.dev
@@ -193,7 +245,8 @@ module YardGhurt
     
     # @example
     #   task.js_scripts << '<script src="js/prism.js"></script>'
-    # @return [Array<String>] the CSS styles to add to each file; default: +[]+
+    # 
+    # @return [Array<String>] the JS scripts to add to each file; default: +[]+
     attr_accessor :js_scripts
     
     # @return [Array<String>] the (GFM) Markdown files to fix; default: +['file.README.html','index.html']+
@@ -202,13 +255,18 @@ module YardGhurt
     # @return [String] the name of this task (customizable); default: +yard_gfm_fix+
     attr_accessor :name
     
-    # @return [true,false] whether to puts() each change to stdout; default: +true+
+    # @return [true,false] whether to output each change to stdout; default: +true+
     attr_accessor :verbose
     
     alias_method :dry_run?,:dry_run
+    alias_method :fix_anchor_links?,:fix_anchor_links
     alias_method :fix_code_langs?,:fix_code_langs
+    alias_method :fix_file_links?,:fix_file_links
+    alias_method :has_css_comment?,:has_css_comment
+    alias_method :has_js_comment?,:has_js_comment
     alias_method :verbose?,:verbose
     
+    # @param name [Symbol] the name of this task to use on the command line with +rake+
     def initialize(name=:yard_gfm_fix)
       @after = nil
       @anchor_db = {}
@@ -235,12 +293,15 @@ module YardGhurt
       define()
     end
     
+    # Reset certain instance vars per file.
     def reset_per_file()
       @anchor_links = AnchorLinks.new()
       @has_css_comment = false
       @has_js_comment = false
+      @has_verbose_comment = false
     end
     
+    # Define the Rake task and description using the instance variables.
     def define()
       desc @description
       task @name,Array(@arg_names) => Array(@deps) do |task,args|
@@ -261,6 +322,14 @@ module YardGhurt
       return self
     end
     
+    # Convert each HTML header tag in +md_file+ to a GFM & YARDoc anchor link
+    # and build a database using them.
+    # 
+    # @param md_file [String] the file (no dir) to build the anchor links database with,
+    #                         will be joined to {doc_dir}
+    # 
+    # @see AnchorLinks#<<
+    # @see AnchorLinks#merge_anchor_ids!
     def build_anchor_links_db(md_file)
       filename = File.join(@doc_dir,md_file)
       
@@ -279,6 +348,9 @@ module YardGhurt
       @anchor_links.merge_anchor_ids!(@anchor_db)
     end
     
+    # Fix (find & replace) text in +md_file+. Calls all +add_*+ & +gsub_*+ methods.
+    # 
+    # @param md_file [String] the file (no dir) to fix, will be joined to {doc_dir}
     def fix_md_file(md_file)
       filename = File.join(@doc_dir,md_file)
       
@@ -335,6 +407,10 @@ module YardGhurt
       end
     end
     
+    # Add {CSS_COMMENT} & {css_styles} to +line+ if it is +</head>+,
+    # unless {CSS_COMMENT} has already been found or {has_css_comment}.
+    # 
+    # @param line [String] the line from the file to check if +</head>+
     def add_css_styles!(line)
       return false if @has_css_comment || @css_styles.empty?()
       
@@ -360,6 +436,10 @@ module YardGhurt
       return true
     end
     
+    # Add {JS_COMMENT} & {js_scripts} to +line+ if it is +</body>+,
+    # unless {JS_COMMENT} has already been found or {has_js_comment}.
+    # 
+    # @param line [String] the line from the file to check if +</body>+
     def add_js_scripts!(line)
       return false if @has_js_comment || @js_scripts.empty?()
       
@@ -385,7 +465,10 @@ module YardGhurt
       return true
     end
     
-    #task.custom_gsubs = [['href="#This_Is_A_Test"','href="#This-is-a-Test"']]
+    # Replace GFM anchor links with their equivalent YARDoc anchor links,
+    # using {build_anchor_links_db} & {anchor_db}, if {fix_anchor_links}.
+    # 
+    # @param line [String] the line from the file to fix
     def gsub_anchor_links!(line)
       return false unless @fix_anchor_links
       
@@ -403,9 +486,19 @@ module YardGhurt
           if yard_link.nil?()
             # Either the GFM link is wrong [check with @anchor_links.to_github_anchor_id()]
             #   or the internal code is broken [check with @anchor_links.to_s()]
-            puts "! YARDoc anchor link [#{link}] does not exist; GFM anchor link is wrong?"
-            # TODO: if not verbose, output to turn on verbose for more info
-            #       if verbose, output @anchor_links once (store boolean)
+            puts "! YARDoc anchor link for GFM anchor link [#{link}] does not exist"
+            
+            if !@has_verbose_comment
+              if @verbose
+                puts '  GFM anchor link in the Markdown file is wrong?'
+                puts '  Please check the generated links:'
+                puts %Q(  #{@anchor_links.to_s().strip().gsub("\n","\n  ")})
+              else
+                puts "  Turn on #{self.class}.verbose for more info"
+              end
+              
+              @has_verbose_comment = true
+            end
             
             href
           else
@@ -419,6 +512,10 @@ module YardGhurt
       return has_change
     end
     
+    # Add +language-+ to code class languages and down case them,
+    # if {fix_code_langs} and the language is not in {exclude_code_langs}.
+    # 
+    # @param line [String] the line from the file to fix
     def gsub_code_langs!(line)
       return false unless @fix_code_langs
       
@@ -440,11 +537,22 @@ module YardGhurt
       return has_change
     end
     
+    # Call the custom Proc {custom_gsub} (if it responds to +:call+) on +line+,
+    # 
+    # @param line [String] the line from the file to fix
     def gsub_custom!(line)
       return false unless @custom_gsub.respond_to?(:call)
       return @custom_gsub.call(line)
     end
     
+    # Call +gsub!()+ on +line+ with each {custom_gsubs},
+    # which is an Array of pairs of arguments:
+    #   task.custom_gsubs = [
+    #     ['dev','prod'],
+    #     [/href="#[^"]*"/,'href="#contents"']
+    #   ]
+    # 
+    # @param line [String] the line from the file to fix
     def gsub_customs!(line)
       return false if @custom_gsubs.empty?()
       
@@ -457,6 +565,10 @@ module YardGhurt
       return has_change
     end
     
+    # Replace local file links (that exist) to be +file.{filename}.html+,
+    # if {fix_file_links}.
+    # 
+    # @param line [String] the line from the file to fix
     def gsub_local_file_links!(line)
       return false unless @fix_file_links
       
