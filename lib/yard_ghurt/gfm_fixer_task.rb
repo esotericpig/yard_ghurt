@@ -298,7 +298,7 @@ module YardGhurt
       @anchor_links = AnchorLinks.new()
       @has_css_comment = false
       @has_js_comment = false
-      @has_verbose_comment = false
+      @has_verbose_anchor_links = false
     end
     
     # Define the Rake task and description using the instance variables.
@@ -488,7 +488,7 @@ module YardGhurt
             #   or the internal code is broken [check with @anchor_links.to_s()]
             puts "! YARDoc anchor link for GFM anchor link [#{link}] does not exist"
             
-            if !@has_verbose_comment
+            if !@has_verbose_anchor_links
               if @verbose
                 puts '  GFM anchor link in the Markdown file is wrong?'
                 puts '  Please check the generated links:'
@@ -497,7 +497,7 @@ module YardGhurt
                 puts "  Turn on #{self.class}.verbose for more info"
               end
               
-              @has_verbose_comment = true
+              @has_verbose_anchor_links = true
             end
             
             href
