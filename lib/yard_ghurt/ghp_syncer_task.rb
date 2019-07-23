@@ -149,7 +149,7 @@ module YardGhurt
           raise ArgumentError,"#{self.class}.ghp_dir must be set"
         end
         
-        sh *build_sh_cmd(deploy)
+        sh(*build_sh_cmd(deploy))
         
         if !deploy
           puts
