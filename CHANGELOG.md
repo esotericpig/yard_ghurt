@@ -2,7 +2,15 @@
 
 Format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.0.0...master)
+## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.0.1...master)
+
+## [v1.0.1] - 2019-07-28
+### Changed
+- Some minor comments/doc
+- Refactored the Gemspec (minor)
+
+### Fixed
+- In GFMFixerTask, ignore empty lines
 
 ## [v1.0.0] - 2019-07-23
 ### Added
