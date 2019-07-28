@@ -32,7 +32,8 @@ module YardGhurt
   # 
   # All internal code should use this module.
   # 
-  # All external code should use {YardGhurt}, which includes this module as a mixin.
+  # External code can either use this module or {YardGhurt},
+  # which includes this module as a mixin.
   # 
   # @author Jonathan Bradley Whited (@esotericpig)
   # @since  1.0.0

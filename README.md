@@ -18,7 +18,7 @@
 - [Using](#using)
     - [GFMFixerTask](#gfmfixertask)
     - [GHPSyncerTask](#ghpsyncertask)
-    - [YardGhurt / Util](#yardghurt--util)
+    - [Util / YardGhurt](#util--yardghurt)
     - [AnchorLinks](#anchorlinks)
 - [Hacking](#hacking)
     - [Testing](#testing)
@@ -70,7 +70,7 @@ $ bundle exec rake install:local
 
 | Helper | Description |
 | --- | --- |
-| [YardGhurt / Util](#yardghurt--util) | Utility methods for tasks |
+| [Util / YardGhurt](#util--yardghurt) | Utility methods for tasks |
 | [AnchorLinks](#anchorlinks) | A “database” of anchor links |
 
 ### [GFMFixerTask](#using)
@@ -160,30 +160,31 @@ YardGhurt::GHPSyncerTask.new(:ghp_doc) do |task|
 end
 ```
 
-### [YardGhurt / Util](#using)
+### [Util / YardGhurt](#using)
 
 Utility methods for tasks.
 
 ```Ruby
-require 'yard_ghurt'
-
-# If the file exists, delete it, and if output is true, log it to stdout
-YardGhurt.rm_exist('doc/file.README.html')
-YardGhurt.rm_exist('doc/file.README.html',false)
-
-# Convert an Object to true or false
-puts YardGhurt.to_bool('true') # true
-puts YardGhurt.to_bool('on')   # true
-puts YardGhurt.to_bool('yes')  # true
-```
-
-If you don't want to include all of the Tasks and Helpers, then you should include and use `yard_ghurt/util` instead:
-
-```Ruby
 require 'yard_ghurt/util'
 
+# If the file exists, delete it, and if output is true, log it to stdout
 YardGhurt::Util.rm_exist('doc/file.README.html')
-puts YardGhurt::Util.to_bool('true')
+YardGhurt::Util.rm_exist('doc/file.README.html',false)
+
+# Convert an Object to true or false
+puts YardGhurt::Util.to_bool('true') # true
+puts YardGhurt::Util.to_bool('on')   # true
+puts YardGhurt::Util.to_bool('yes')  # true
+puts YardGhurt::Util.to_bool(nil)    # false
+```
+
+For convenience, *Util*'s methods are also included in the top module *YardGhurt*. However, this will also include all of the Tasks and Helpers, so *Util* is preferred, unless you're already requiring *yard_ghurt*.
+
+```Ruby
+require 'yard_ghurt'
+
+YardGhurt.rm_exist('doc/file.README.html')
+puts YardGhurt.to_bool('true')
 ```
 
 ### [AnchorLinks](#using)
