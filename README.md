@@ -167,7 +167,7 @@ Utility methods for tasks.
 ```Ruby
 require 'yard_ghurt/util'
 
-# If the file exists, delete it, and if output is true, log it to stdout
+# If the file exists, delete it, and if +output+ is true, log it to stdout
 YardGhurt::Util.rm_exist('doc/file.README.html')
 YardGhurt::Util.rm_exist('doc/file.README.html',false)
 
