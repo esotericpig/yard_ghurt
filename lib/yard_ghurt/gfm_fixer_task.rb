@@ -340,6 +340,9 @@ module YardGhurt
           next if line !~ /<h\d+>/i
           
           line.gsub!(/<[^>]+>/,'') # Remove tags: <...>
+          line.strip!()
+          
+          next if line.empty?()
           
           @anchor_links << line
         end
@@ -367,6 +370,12 @@ module YardGhurt
       
       File.open(filename,'r') do |file|
         file.each_line do |line|
+          if line.strip().empty?()
+            lines << line
+            
+            next
+          end
+          
           has_change = false
           
           # Standard
@@ -476,9 +485,9 @@ module YardGhurt
       tag = 'href="#'
       
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |href|
-        link = href[tag.length..-2]
+        link = href[tag.length..-2].strip()
         
-        if @anchor_links.yard_anchor_id?(link)
+        if link.empty?() || @anchor_links.yard_anchor_id?(link)
           href
         else
           yard_link = @anchor_links[link]
@@ -523,9 +532,9 @@ module YardGhurt
       tag = 'code class="'
       
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |code_class|
-        lang = code_class[tag.length..-2]
+        lang = code_class[tag.length..-2].strip()
         
-        if lang =~ /^language\-/ || @exclude_code_langs.include?(lang)
+        if lang.empty?() || lang =~ /^language\-/ || @exclude_code_langs.include?(lang)
           code_class
         else
           has_change = true
@@ -576,15 +585,15 @@ module YardGhurt
       tag = 'href="'
       
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^#][^"]*"')) do |href|
-        link = href[tag.length..-2]
+        link = href[tag.length..-2].strip()
         
-        if File.exist?(link)
+        if link.empty?() || !File.exist?(link)
+          href
+        else
           link = File.basename(link,'.*')
           has_change = true
           
           %Q(#{tag}file.#{link}.html")
-        else
-          href
         end
       end
       
