@@ -20,7 +20,7 @@
 #++
 
 
-lib = File.expand_path('../lib',__FILE__)
+lib = File.expand_path(File.join('..','lib'),__FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'yard_ghurt/version'
@@ -33,7 +33,7 @@ Gem::Specification.new() do |spec|
   spec.licenses    = ['LGPL-3.0-or-later']
   spec.homepage    = 'https://github.com/esotericpig/yard_ghurt'
   spec.summary     = 'YARDoc GitHub Rake Tasks'
-  spec.description = 'YARDoc GitHub Rake Tasks. Fix GitHub Flavored Markdown (GFM) files.'
+  spec.description = "#{spec.summary}. Fix GitHub Flavored Markdown (GFM) files."
   
   spec.metadata = {
     'bug_tracker_uri'   => 'https://github.com/esotericpig/yard_ghurt/issues',
@@ -45,7 +45,8 @@ Gem::Specification.new() do |spec|
   
   spec.require_paths = ['lib']
   
-  spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')},test,yard}",'**','*.{erb,rb}')) +
+  spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')}}",'**','*.{erb,rb}')) +
+               Dir.glob(File.join('{test,yard}','**','*.{erb,rb}')) +
                %W( Gemfile #{spec.name}.gemspec Rakefile ) +
                %w( CHANGELOG.md LICENSE.txt README.md )
   
