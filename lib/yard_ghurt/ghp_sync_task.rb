@@ -54,7 +54,7 @@ module YardGhurt
   #   end
   # 
   # @author Jonathan Bradley Whited (@esotericpig)
-  # @since  1.0.0
+  # @since  1.1.0
   ###
   class GHPSyncTask < Rake::TaskLib
     # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the end of this task or +nil+;
