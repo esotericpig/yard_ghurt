@@ -27,11 +27,15 @@ require 'set'
 require 'rake/tasklib'
 
 require 'yard_ghurt/anchor_links'
+require 'yard_ghurt/util'
 
 module YardGhurt
   ###
   # Fix (find & replace) text in the GitHub Flavored Markdown (GFM) files in the YARDoc directory,
   # for differences between the two formats.
+  # 
+  # You can set {dry_run} on the command line:
+  #   rake yard_gfm_fix dryrun=true
   # 
   # @example What I Use
   #   YardGhurt::GFMFixTask.new() do |task|
@@ -79,7 +83,7 @@ module YardGhurt
   #   end
   # 
   # @author Jonathan Bradley Whited (@esotericpig)
-  # @since  1.0.0
+  # @since  1.1.0
   ###
   class GFMFixTask < Rake::TaskLib
     # This is important so that a subsequent call to this task will not write the CSS again.
@@ -305,6 +309,12 @@ module YardGhurt
     def define()
       desc @description
       task @name,Array(@arg_names) => Array(@deps) do |task,args|
+        env_dryrun = ENV['dryrun']
+        
+        if !env_dryrun.nil?() && !(env_dryrun = env_dryrun.to_s().strip()).empty?()
+          @dry_run = Util.to_bool(env_dryrun)
+        end
+        
         @before.call(self,args) if @before.respond_to?(:call)
         
         @md_files.each do |md_file|

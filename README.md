@@ -77,6 +77,10 @@ $ bundle exec rake install:local
 
 Fix (find & replace) text in the GitHub Flavored Markdown (GFM) files in the YARDoc directory, for differences between the two formats.
 
+You can set *dry_run* on the command line:
+
+`$ rake yard_gfm_fix dryrun=true`
+
 **What I typically use:**
 
 ```Ruby
