@@ -47,7 +47,7 @@ desc 'Generate pristine YARDoc'
 task :yard_fresh => [:clobber,:yard,:yard_gfm_fix] do |task|
 end
 
-YardGhurt::GFMFixerTask.new() do |task|
+YardGhurt::GFMFixTask.new() do |task|
   task.arg_names = [:dev]
   task.dry_run = false
   task.fix_code_langs = true
@@ -62,7 +62,7 @@ YardGhurt::GFMFixerTask.new() do |task|
 end
 
 # Probably not useful for others.
-YardGhurt::GHPSyncerTask.new() do |task|
+YardGhurt::GHPSyncTask.new() do |task|
   task.ghp_dir = '../esotericpig.github.io/docs/yard_ghurt/yardoc'
   task.sync_args << '--delete-after'
 end

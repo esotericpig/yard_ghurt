@@ -32,14 +32,14 @@ module YardGhurt
   # Sync YARDoc to a local GitHub Pages repo (uses +rsync+ by default).
   # 
   # @example What I Use
-  #   YardGhurt::GHPSyncerTask.new() do |task|
+  #   YardGhurt::GHPSyncTask.new() do |task|
   #     task.ghp_dir = '../esotericpig.github.io/docs/yard_ghurt/yardoc'
   #     task.sync_args << '--delete-after'
   #   end
   # 
   # @example Using All Options
   #   # Execute: rake ghp_doc[false,'Ruby']
-  #   YardGhurt::GHPSyncerTask.new(:ghp_doc) do |task|
+  #   YardGhurt::GHPSyncTask.new(:ghp_doc) do |task|
   #     task.arg_names   << :name                      # Custom args
   #     task.deps        << :yard                      # Custom dependencies
   #     task.description  = 'Rsync my_doc/ to my page'
@@ -56,7 +56,7 @@ module YardGhurt
   # @author Jonathan Bradley Whited (@esotericpig)
   # @since  1.0.0
   ###
-  class GHPSyncerTask < Rake::TaskLib
+  class GHPSyncTask < Rake::TaskLib
     # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the end of this task or +nil+;
     #                    default: +nil+
     attr_accessor :after

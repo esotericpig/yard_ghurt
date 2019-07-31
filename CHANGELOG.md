@@ -2,7 +2,14 @@
 
 Format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.0.1...master)
+## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.1.0...master)
+
+## [v1.1.0] - 2019-07-31
+### Changed
+- Renamed GFMFixerTask to GFMFixTask
+    - lib/yard_ghurt/gfm_fixer_task.rb => lib/yard_ghurt/gfm_fix_task.rb
+- Renamed GHPSyncerTask to GHPSyncTask
+    - lib/yard_ghurt/ghp_syncer_task.rb => lib/yard_ghurt/ghp_sync_task.rb
 
 ## [v1.0.1] - 2019-07-28
 ### Changed

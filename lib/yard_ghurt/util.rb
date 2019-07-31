@@ -25,7 +25,7 @@ module YardGhurt
   ###
   # Utility methods in a separate module/mixin,
   # so that a programmer can require/load a sole task:
-  #   require 'yard_ghurt/gfm_fixer_task'
+  #   require 'yard_ghurt/gfm_fix_task'
   # 
   # Else, programmers would be required to always require/load the entire +yard_ghurt+ module:
   #   require 'yard_ghurt'
@@ -70,7 +70,7 @@ module YardGhurt
       # @return [true,false] the boolean value of +str+
       # 
       # @see TRUE_BOOLS
-      # @see GHPSyncerTask#arg_names
+      # @see GHPSyncTask#arg_names
       def to_bool(str)
         return TRUE_BOOLS.include?(str.to_s().downcase())
       end

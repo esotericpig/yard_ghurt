@@ -34,7 +34,7 @@ module YardGhurt
   # for differences between the two formats.
   # 
   # @example What I Use
-  #   YardGhurt::GFMFixerTask.new() do |task|
+  #   YardGhurt::GFMFixTask.new() do |task|
   #     task.arg_names = [:dev]
   #     task.dry_run = false
   #     task.fix_code_langs = true
@@ -53,7 +53,7 @@ module YardGhurt
   #   end
   # 
   # @example Using All Options
-  #   YardGhurt::GFMFixerTask.new(:yard_fix) do |task|
+  #   YardGhurt::GFMFixTask.new(:yard_fix) do |task|
   #     task.anchor_db           = {'tests' => 'Testing'} # #tests => #Testing
   #     task.arg_names          << :name # Custom args
   #     task.css_styles         << '<link rel="stylesheet" href="css/my_css.css" />' # Inserted at </head>
@@ -81,7 +81,7 @@ module YardGhurt
   # @author Jonathan Bradley Whited (@esotericpig)
   # @since  1.0.0
   ###
-  class GFMFixerTask < Rake::TaskLib
+  class GFMFixTask < Rake::TaskLib
     # This is important so that a subsequent call to this task will not write the CSS again.
     # 
     # @return [String] the comment tag of where to place {css_styles}

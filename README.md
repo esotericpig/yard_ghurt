@@ -16,8 +16,8 @@
 
 - [Setup](#setup)
 - [Using](#using)
-    - [GFMFixerTask](#gfmfixertask)
-    - [GHPSyncerTask](#ghpsyncertask)
+    - [GFMFixTask](#gfmfixtask)
+    - [GHPSyncTask](#ghpsynctask)
     - [Util / YardGhurt](#util--yardghurt)
     - [AnchorLinks](#anchorlinks)
 - [Hacking](#hacking)
@@ -63,8 +63,8 @@ $ bundle exec rake install:local
 
 | Task | Description |
 | --- | --- |
-| [GFMFixerTask](#gfmfixertask) | Fix GitHub Flavored Markdown files |
-| [GHPSyncerTask](#ghpsyncertask) | Sync YARDoc to a local GitHub Pages repo. |
+| [GFMFixTask](#gfmfixtask) | Fix GitHub Flavored Markdown files |
+| [GHPSyncTask](#ghpsynctask) | Sync YARDoc to a local GitHub Pages repo. |
 
 **Helpers:**
 
@@ -73,14 +73,14 @@ $ bundle exec rake install:local
 | [Util / YardGhurt](#util--yardghurt) | Utility methods for tasks |
 | [AnchorLinks](#anchorlinks) | A “database” of anchor links |
 
-### [GFMFixerTask](#using)
+### [GFMFixTask](#using)
 
 Fix (find & replace) text in the GitHub Flavored Markdown (GFM) files in the YARDoc directory, for differences between the two formats.
 
 **What I typically use:**
 
 ```Ruby
-YardGhurt::GFMFixerTask.new() do |task|
+YardGhurt::GFMFixTask.new() do |task|
   task.arg_names = [:dev]
   task.dry_run = false
   task.fix_code_langs = true
@@ -102,7 +102,7 @@ end
 **Using all options:**
 
 ```Ruby
-YardGhurt::GFMFixerTask.new(:yard_fix) do |task|
+YardGhurt::GFMFixTask.new(:yard_fix) do |task|
   task.anchor_db           = {'tests' => 'Testing'} # #tests => #Testing
   task.arg_names          << :name # Custom args
   task.css_styles         << '<link rel="stylesheet" href="css/my_css.css" />' # Inserted at </head>
@@ -128,14 +128,14 @@ YardGhurt::GFMFixerTask.new(:yard_fix) do |task|
 end
 ```
 
-### [GHPSyncerTask](#using)
+### [GHPSyncTask](#using)
 
 Sync YARDoc to a local GitHub Pages repo (uses `rsync` by default).
 
 **What I typically use:**
 
 ```Ruby
-YardGhurt::GHPSyncerTask.new() do |task|
+YardGhurt::GHPSyncTask.new() do |task|
   task.ghp_dir = '../esotericpig.github.io/docs/yard_ghurt/yardoc'
   task.sync_args << '--delete-after'
 end
@@ -145,7 +145,7 @@ end
 
 ```Ruby
 # Execute: rake ghp_doc[false,'Ruby']
-YardGhurt::GHPSyncerTask.new(:ghp_doc) do |task|
+YardGhurt::GHPSyncTask.new(:ghp_doc) do |task|
   task.arg_names   << :name                      # Custom args
   task.deps        << :yard                      # Custom dependencies
   task.description  = 'Rsync my_doc/ to my page'

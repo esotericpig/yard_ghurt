@@ -74,7 +74,7 @@ module YardGhurt
   # @author Jonathan Bradley Whited (@esotericpig)
   # @since  1.0.0
   # 
-  # @see GFMFixerTask
+  # @see GFMFixTask
   ###
   class AnchorLinks
     # @return [Hash] the GFM-style anchor IDs pointing to their YARDoc ID equivalents that have been added
