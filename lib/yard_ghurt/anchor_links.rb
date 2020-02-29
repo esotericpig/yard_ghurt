@@ -119,6 +119,15 @@ module YardGhurt
       return self
     end
     
+    # Escape +str+ for the web (e.g., "%20" for a space).
+    # 
+    # Mainly used for non-English languages.
+    # 
+    # @param str [String] the string to escape
+    # 
+    # @return [String] the escaped string
+    # 
+    # @since  1.2.0
     def self.escape(str)
       # URI.escape()/encode() is obsolete
       return URI.encode_www_form_component(str)
