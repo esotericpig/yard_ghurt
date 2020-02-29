@@ -24,5 +24,6 @@
 require 'yard_ghurt'
 
 
+# @since 1.2.0
 yg = YardGhurt::App.new()
 yg.run()
