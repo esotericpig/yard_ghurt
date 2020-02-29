@@ -324,7 +324,7 @@ Newline
 [GNU LGPL v3+](LICENSE.txt)
 
 > YardGhurt (<https://github.com/esotericpig/yard_ghurt>)  
-> Copyright (c) 2019 Jonathan Bradley Whited (@esotericpig)  
+> Copyright (c) 2019-2020 Jonathan Bradley Whited (@esotericpig)  
 > 
 > YardGhurt is free software: you can redistribute it and/or modify  
 > it under the terms of the GNU Lesser General Public License as published by  
