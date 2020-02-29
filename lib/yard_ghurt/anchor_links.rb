@@ -119,6 +119,11 @@ module YardGhurt
       return self
     end
     
+    def self.escape(str)
+      # URI.escape()/encode() is obsolete
+      return URI.encode_www_form_component(str)
+    end
+    
     # Merge +anchor_ids+ with {anchor_ids} and {yard_anchor_ids}.
     # 
     # @param anchor_ids [Hash] the anchor IDs (of GFM anchor IDs to YARDoc anchor IDs) to merge
@@ -198,7 +203,7 @@ module YardGhurt
         id.downcase!()
       end
       
-      id = URI.escape(id) # For non-English languages
+      id = self.class.escape(id) # For non-English languages
       
       # Duplicates
       dup_num = 1
@@ -246,7 +251,7 @@ module YardGhurt
       id.strip!()
       id.gsub!(/&[^;]+;/,'_') # Replace entities: &...;
       id.gsub!(/[^a-z0-9-]/i,'_')
-      id = URI.escape(id) # For non-English languages
+      id = self.class.escape(id) # For non-English languages
       
       # Duplicates
       orig_id = id.dup()
