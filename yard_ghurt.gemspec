@@ -3,7 +3,7 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2019 Jonathan Bradley Whited (@esotericpig)
+# Copyright (c) 2019-2020 Jonathan Bradley Whited (@esotericpig)
 # 
 # YardGhurt is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -44,8 +44,11 @@ Gem::Specification.new() do |spec|
   }
   
   spec.require_paths = ['lib']
+  spec.bindir        = 'bin'
+  spec.executables   = [spec.name]
   
   spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')}}",'**','*.{erb,rb}')) +
+               Dir.glob(File.join(spec.bindir,'**',"{#{spec.executables.join(',')}}")) +
                Dir.glob(File.join('{test,yard}','**','*.{erb,rb}')) +
                %W( Gemfile #{spec.name}.gemspec Rakefile ) +
                %w( CHANGELOG.md LICENSE.txt README.md )
