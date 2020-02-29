@@ -64,6 +64,12 @@ module YardGhurt
         
         op.banner = "Usage: #{op.program_name} [options]"
         
+        op.on('-a','--anchor <string>','Print GitHub & YARDoc anchor link IDs of <string>') do |str|
+          al = AnchorLinks.new()
+          puts "GitHub: #{al.to_github_anchor_id(str)}"
+          puts "YARDoc: #{al.to_yard_anchor_id(str)}"
+          exit
+        end
         op.on('-g','--github <string>','Print GitHub anchor link ID of <string>') do |str|
           al = AnchorLinks.new()
           puts al.to_github_anchor_id(str)
