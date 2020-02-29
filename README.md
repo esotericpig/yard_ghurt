@@ -20,6 +20,7 @@
     - [GHPSyncTask](#ghpsynctask)
     - [Util / YardGhurt](#util--yardghurt)
     - [AnchorLinks](#anchorlinks)
+- [CLI App](#cli-app)
 - [Hacking](#hacking)
     - [Testing](#testing)
 - [Tests](#tests)
@@ -242,6 +243,33 @@ puts al.to_yard_anchor_id(name)   # This_is_another_test_3
 
 puts al.to_github_anchor_id(name) # this-is-another-test-1
 puts al.to_github_anchor_id(name) # this-is-another-test-1
+```
+
+## [CLI App](#contents)
+A CLI app has been added for convenience for when writing your own README.
+
+On the command line:
+```
+$ yard_ghurt -g "What's this ID?"
+# => whats-this-id
+
+$ yard_ghurt -y "What's this ID?"
+# => What_s_this_ID_
+
+$ yard_ghurt -a "What's this ID?"
+# => GitHub: whats-this-id
+#    YARDoc: What_s_this_ID_
+```
+
+Help:
+```
+Usage: yard_ghurt [options]
+    -a, --anchor <string>            Print GitHub & YARDoc anchor link IDs of <string>
+    -g, --github <string>            Print GitHub anchor link ID of <string>
+    -y, --yard <string>              Print YARDoc anchor link ID of <string>
+    ---
+    -h, --help                       Print this help
+    -v, --version                    Print the version
 ```
 
 ## [Hacking](#contents)
