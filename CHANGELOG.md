@@ -2,7 +2,21 @@
 
 Format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.1.0...master)
+## [[Unreleased]](https://github.com/esotericpig/yard_ghurt/compare/v1.2.0...master)
+
+## [v1.2.0] - 2020-02-29
+### Added
+- bin/yard_ghurt
+    - For getting the GitHub/YARDoc anchor link ID from a string
+- App class
+- AnchorLinks.escape()
+
+### Changed
+- README to talk about bin/yard_ghurt
+
+### Fixed
+- In AnchorLinks, don't use obsolete method URI.escape()/encode()
+    - This outputted a lot of warnings
 
 ## [v1.1.0] - 2019-07-31
 ### Added
