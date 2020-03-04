@@ -276,6 +276,7 @@ Usage: yard_ghurt [options]
 
 ```
 $ git clone 'https://github.com/esotericpig/yard_ghurt.git'
+$ cd yard_ghurt
 $ bundle install
 $ bundle exec rake -T
 ```
