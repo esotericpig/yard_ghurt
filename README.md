@@ -60,6 +60,8 @@ $ bundle exec rake install:local
 
 ## [Using](#contents)
 
+Currently, you can't use this project as a YARDoc Plugin, but planning on it for v2.0. Read the [TODO](TODO.md) for more info.
+
 **Rake Tasks:**
 
 | Task | Description |
