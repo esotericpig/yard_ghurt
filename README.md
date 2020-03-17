@@ -2,10 +2,10 @@
 
 [![Gem Version](https://badge.fury.io/rb/yard_ghurt.svg)](https://badge.fury.io/rb/yard_ghurt)
 
-[![Documentation](https://img.shields.io/badge/doc-yard-%23A0522D.svg?style=for-the-badge)](https://esotericpig.github.io/docs/yard_ghurt/yardoc/index.html)
-[![Source Code](https://img.shields.io/badge/source-github-%23A0522D.svg?style=for-the-badge)](https://github.com/esotericpig/yard_ghurt)
-[![Changelog](https://img.shields.io/badge/changelog-md-%23A0522D.svg?style=for-the-badge)](CHANGELOG.md)
-[![License](https://img.shields.io/github/license/esotericpig/yard_ghurt.svg?color=%23A0522D&style=for-the-badge)](LICENSE.txt)
+[![Documentation](https://img.shields.io/badge/doc-yard-%23A0522D.svg)](https://esotericpig.github.io/docs/yard_ghurt/yardoc/index.html)
+[![Source Code](https://img.shields.io/badge/source-github-%23211F1F.svg)](https://github.com/esotericpig/yard_ghurt)
+[![Changelog](https://img.shields.io/badge/changelog-md-%23A0522D.svg)](CHANGELOG.md)
+[![License](https://img.shields.io/github/license/esotericpig/yard_ghurt.svg)](LICENSE.txt)
 
 <u>YARD</u>oc <u>G</u>it<u>Hu</u>b <u>R</u>ake <u>T</u>asks
 
