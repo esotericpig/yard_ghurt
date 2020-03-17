@@ -35,7 +35,7 @@ CLOBBER.include('doc/')
 YARD::Rake::YardocTask.new() do |task|
   task.files = [File.join('lib','**','*.rb')]
   
-  task.options += ['--files','CHANGELOG.md,LICENSE.txt']
+  task.options += ['--files','CHANGELOG.md,LICENSE.txt,TODO.md']
   task.options += ['--readme','README.md']
   
   task.options << '--protected' # Show protected methods
