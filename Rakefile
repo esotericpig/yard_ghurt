@@ -22,15 +22,21 @@
 
 require 'bundler/gem_tasks'
 
+require 'rake/clean'
+
 require 'yard'
 require 'yard_ghurt'
 
-require 'rake/clean'
 
-task default: [:yard,:yard_gfm_fix]
+task default: [:doc]
 
 CLEAN.exclude('.git/','stock/')
 CLOBBER.include('doc/')
+
+
+desc 'Generate documentation (YARDoc)'
+task :doc => [:yard,:yard_gfm_fix] do |task|
+end
 
 YARD::Rake::YardocTask.new() do |task|
   task.files = [File.join('lib','**','*.rb')]
@@ -43,16 +49,14 @@ YARD::Rake::YardocTask.new() do |task|
   task.options += ['--title',"YardGhurt v#{YardGhurt::VERSION} Doc"]
 end
 
-desc 'Generate pristine YARDoc'
-task :yard_fresh => [:clobber,:yard,:yard_gfm_fix] do |task|
-end
-
 YardGhurt::GFMFixTask.new() do |task|
   task.arg_names = [:dev]
   task.dry_run = false
   task.fix_code_langs = true
   
   task.before = Proc.new() do |task,args|
+    # Do not delete 'file.README.html', as we need it for testing.
+    
     # Root dir of my GitHub Page for CSS/JS
     GHP_ROOT_DIR = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
     
