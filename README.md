@@ -80,6 +80,16 @@ Currently, you can't use this project as a YARDoc Plugin, but planning on it for
 
 Fix (find & replace) text in the GitHub Flavored Markdown (GFM) files in the YARDoc directory, for differences between the two formats.
 
+**Very Important!**
+
+In order for this to work, you must also add `redcarpet` as a dependency, per YARDoc's documentation:
+
+```Ruby
+spec.add_development_dependency 'redcarpet','~> X.X' # For YARDoc Markdown (*.md)
+```
+
+Else, you'll get a bunch of `label-*` relative links.
+
 You can set *dry_run* on the command line:
 
 `$ rake yard_gfm_fix dryrun=true`
