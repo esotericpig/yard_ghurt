@@ -55,10 +55,10 @@ Gem::Specification.new() do |spec|
   
   spec.required_ruby_version = '>= 2.1.10'
   
-  spec.add_runtime_dependency 'rake' #,'~> 12.3'
+  spec.add_runtime_dependency 'rake'
   
-  spec.add_development_dependency 'bundler'  ,'~> 1.17'
-  spec.add_development_dependency 'rdoc'     ,'~> 6.2'  # For RDoc for YARD (*.rb)
+  spec.add_development_dependency 'bundler'  ,'~> 2.2'
+  spec.add_development_dependency 'rdoc'     ,'~> 6.3'  # For RDoc for YARD (*.rb)
   spec.add_development_dependency 'redcarpet','~> 3.5'  # For Markdown for YARD (*.md)
   spec.add_development_dependency 'yard'     ,'~> 0.9'
 end
