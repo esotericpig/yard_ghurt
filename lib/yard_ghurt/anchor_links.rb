@@ -74,15 +74,16 @@ module YardGhurt
     # @return [Integer] the next YARDoc number to use if there is a duplicate anchor ID
     attr_accessor :yard_dup_num
 
-    def initialize()
-      reset()
+    def initialize
+      super()
+      reset
     end
 
     # Reset the database back to its fresh, pristine self,
     # including common numbers for duplicates.
-    def reset()
+    def reset
       @anchor_ids = {}
-      @yard_anchor_ids = Set.new()
+      @yard_anchor_ids = Set.new
       @yard_dup_num = 0
     end
 
@@ -93,7 +94,7 @@ module YardGhurt
 
     # (see #store_anchor)
     def []=(github_anchor_id,yard_anchor_id)
-      return store_anchor(github_anchor_id,yard_anchor_id)
+      store_anchor(github_anchor_id,yard_anchor_id)
     end
 
     # Convert +name+ (header text) to a GFM and YARDoc anchor ID and add the IDs to the database.
@@ -148,8 +149,6 @@ module YardGhurt
     def anchor_ids=(anchor_ids)
       @anchor_ids = anchor_ids
       @yard_anchor_ids.merge(anchor_ids.values)
-
-      return @anchor_ids
     end
 
     # (see #anchor_id)
@@ -187,9 +186,9 @@ module YardGhurt
     # @see https://gist.github.com/asabaylus/3071099#gistcomment-2834467
     # @see https://github.com/jch/html-pipeline/blob/master/lib/html/pipeline/toc_filter.rb
     def to_github_anchor_id(name)
-      id = name.dup()
+      id = name.dup
 
-      id.strip!()
+      id.strip!
       id.gsub!(/&[^;]+;/,'') # Remove entities: &...;
       id.gsub!(/[^\p{Word}\- ]/u,'')
       id.tr!(' ','-')
@@ -197,14 +196,14 @@ module YardGhurt
       if RUBY_VERSION >= '2.4'
         id.downcase!(:ascii)
       else
-        id.downcase!()
+        id.downcase!
       end
 
       id = self.class.escape(id) # For non-English languages
 
       # Duplicates
       dup_num = 1
-      orig_id = id.dup()
+      orig_id = id.dup
 
       while @anchor_ids.key?(id)
         id = "#{orig_id}-#{dup_num}"
@@ -217,10 +216,10 @@ module YardGhurt
     # Dumps the key-value database of GFM & YARDoc anchor IDs.
     #
     # @return [String] the database of anchor IDs as a String
-    def to_s()
-      s = ''.dup()
+    def to_s
+      s = ''.dup
 
-      @anchor_ids.keys.sort_by{|key| key.to_s()}.each do |key|
+      @anchor_ids.keys.sort_by(&:to_s).each do |key|
         s << "[#{key}] => '#{@anchor_ids[key]}'\n"
       end
 
@@ -243,15 +242,15 @@ module YardGhurt
     #
     # @return [String] the converted YARDoc anchor ID for this database
     def to_yard_anchor_id(name)
-      id = name.dup()
+      id = name.dup
 
-      id.strip!()
+      id.strip!
       id.gsub!(/&[^;]+;/,'_') # Replace entities: &...;
       id.gsub!(/[^a-z0-9-]/i,'_')
       id = self.class.escape(id) # For non-English languages
 
       # Duplicates
-      orig_id = id.dup()
+      orig_id = id.dup
 
       while @yard_anchor_ids.include?(id)
         id = "#{orig_id}#{@yard_dup_num}"

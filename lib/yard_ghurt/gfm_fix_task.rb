@@ -32,15 +32,15 @@ module YardGhurt
   #     task.fix_code_langs = true
   #     task.md_files = ['index.html']
   #
-  #     task.before = Proc.new() do |task,args|
+  #     task.before = Proc.new() do |t2,args|
   #       # Delete this file as it's never used (index.html is an exact copy)
-  #       YardGhurt.rm_exist(File.join(task.doc_dir,'file.README.html'))
+  #       YardGhurt.rm_exist(File.join(t2.doc_dir,'file.README.html'))
   #
   #       # Root dir of my GitHub Page for CSS/JS
-  #       GHP_ROOT_DIR = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
+  #       ghp_root_dir = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
   #
-  #       task.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{GHP_ROOT_DIR}/css/prism.css" />)
-  #       task.js_scripts << %Q(<script src="#{GHP_ROOT_DIR}/js/prism.js"></script>)
+  #       t2.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />)
+  #       t2.js_scripts << %Q(<script src="#{ghp_root_dir}/js/prism.js"></script>)
   #     end
   #   end
   #
@@ -260,6 +260,8 @@ module YardGhurt
 
     # @param name [Symbol] the name of this task to use on the command line with +rake+
     def initialize(name=:yard_gfm_fix)
+      super()
+
       @after = nil
       @anchor_db = {}
       @arg_names = []
@@ -281,32 +283,32 @@ module YardGhurt
       @name = name
       @verbose = true
 
-      yield self if block_given?()
-      define()
+      yield self if block_given?
+      define
     end
 
     # Reset certain instance vars per file.
-    def reset_per_file()
-      @anchor_links = AnchorLinks.new()
+    def reset_per_file
+      @anchor_links = AnchorLinks.new
       @has_css_comment = false
       @has_js_comment = false
       @has_verbose_anchor_links = false
     end
 
     # Define the Rake task and description using the instance variables.
-    def define()
+    def define
       desc @description
       task @name,Array(@arg_names) => Array(@deps) do |task,args|
         env_dryrun = ENV['dryrun']
 
-        if !env_dryrun.nil?() && !(env_dryrun = env_dryrun.to_s().strip()).empty?()
+        if !env_dryrun.nil? && !(env_dryrun = env_dryrun.to_s.strip).empty?
           @dry_run = Util.to_bool(env_dryrun)
         end
 
         @before.call(self,args) if @before.respond_to?(:call)
 
         @md_files.each do |md_file|
-          reset_per_file()
+          reset_per_file
           build_anchor_links_db(md_file)
 
           @during.call(self,args,md_file) if @during.respond_to?(:call)
@@ -338,9 +340,9 @@ module YardGhurt
           next if line !~ /<h\d+>/i
 
           line.gsub!(/<[^>]+>/,'') # Remove tags: <...>
-          line.strip!()
+          line.strip!
 
-          next if line.empty?()
+          next if line.empty?
 
           @anchor_links << line
         end
@@ -368,7 +370,7 @@ module YardGhurt
 
       File.open(filename,'r') do |file|
         file.each_line do |line|
-          if line.strip().empty?()
+          if line.strip.empty?
             lines << line
 
             next
@@ -419,17 +421,17 @@ module YardGhurt
     #
     # @param line [String] the line from the file to check if +</head>+
     def add_css_styles!(line)
-      return false if @has_css_comment || @css_styles.empty?()
+      return false if @has_css_comment || @css_styles.empty?
 
-      if line.strip() == CSS_COMMENT
+      if line.strip == CSS_COMMENT
         @has_css_comment = true
 
         return false
       end
 
-      return false unless line =~ /^\s*<\/head>\s*$/i
+      return false unless line =~ %r{^\s*</head>\s*$}i
 
-      line.slice!(0,line.length())
+      line.slice!(0,line.length)
       line << "    #{CSS_COMMENT}"
 
       @css_styles.each do |css_style|
@@ -448,17 +450,17 @@ module YardGhurt
     #
     # @param line [String] the line from the file to check if +</body>+
     def add_js_scripts!(line)
-      return false if @has_js_comment || @js_scripts.empty?()
+      return false if @has_js_comment || @js_scripts.empty?
 
-      if line.strip() == JS_COMMENT
+      if line.strip == JS_COMMENT
         @has_js_comment = true
 
         return false
       end
 
-      return false unless line =~ /^\s*<\/body>\s*$/i
+      return false unless line =~ %r{^\s*</body>\s*$}i
 
-      line.slice!(0,line.length())
+      line.slice!(0,line.length)
       line << "\n    #{JS_COMMENT}"
 
       @js_scripts.each do |js_script|
@@ -483,14 +485,14 @@ module YardGhurt
       tag = 'href="#'
 
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |href|
-        link = href[tag.length..-2].strip()
+        link = href[tag.length..-2].strip
 
-        if link.empty?() || @anchor_links.yard_anchor_id?(link)
+        if link.empty? || @anchor_links.yard_anchor_id?(link)
           href
         else
           yard_link = @anchor_links[link]
 
-          if yard_link.nil?()
+          if yard_link.nil?
             # Either the GFM link is wrong [check with @anchor_links.to_github_anchor_id()]
             #   or the internal code is broken [check with @anchor_links.to_s()]
             puts "! YARDoc anchor link for GFM anchor link [#{link}] does not exist"
@@ -499,7 +501,7 @@ module YardGhurt
               if @verbose
                 puts '  GFM anchor link in the Markdown file is wrong?'
                 puts '  Please check the generated links:'
-                puts %Q(  #{@anchor_links.to_s().strip().gsub("\n","\n  ")})
+                puts %Q(  #{@anchor_links.to_s.strip.gsub("\n","\n  ")})
               else
                 puts "  Turn on #{self.class}.verbose for more info"
               end
@@ -530,14 +532,14 @@ module YardGhurt
       tag = 'code class="'
 
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |code_class|
-        lang = code_class[tag.length..-2].strip()
+        lang = code_class[tag.length..-2].strip
 
-        if lang.empty?() || lang =~ /^language\-/ || @exclude_code_langs.include?(lang)
+        if lang.empty? || lang =~ /^language\-/ || @exclude_code_langs.include?(lang)
           code_class
         else
           has_change = true
 
-          %Q(#{tag}language-#{lang.downcase()}")
+          %Q(#{tag}language-#{lang.downcase}")
         end
       end
 
@@ -561,12 +563,12 @@ module YardGhurt
     #
     # @param line [String] the line from the file to fix
     def gsub_customs!(line)
-      return false if @custom_gsubs.empty?()
+      return false if @custom_gsubs.empty?
 
       has_change = false
 
       @custom_gsubs.each do |custom_gsub|
-        has_change = !line.gsub!(custom_gsub[0],custom_gsub[1]).nil?() || has_change
+        has_change = !line.gsub!(custom_gsub[0],custom_gsub[1]).nil? || has_change
       end
 
       return has_change
@@ -583,9 +585,9 @@ module YardGhurt
       tag = 'href="'
 
       line.gsub!(Regexp.new(Regexp.quote(tag) + '[^#][^"]*"')) do |href|
-        link = href[tag.length..-2].strip()
+        link = href[tag.length..-2].strip
 
-        if link.empty?() || !File.exist?(link)
+        if link.empty? || !File.exist?(link)
           href
         else
           link = File.basename(link,'.*')

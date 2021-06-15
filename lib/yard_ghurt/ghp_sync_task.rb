@@ -98,6 +98,8 @@ module YardGhurt
 
     # @param name [Symbol] the name of this task to use on the command line with +rake+
     def initialize(name=:yard_ghp_sync)
+      super()
+
       @after = nil
       @arg_names = []
       @before = nil
@@ -110,12 +112,12 @@ module YardGhurt
       @sync_args = ['-ahv','--progress']
       @sync_cmd = 'rsync'
 
-      yield self if block_given?()
-      define()
+      yield self if block_given?
+      define
     end
 
     # Define the Rake task and description using the instance variables.
-    def define()
+    def define
       @arg_names = *@arg_names
       @arg_names.unshift(:deploy) unless @arg_names.include?(:deploy)
 
@@ -133,7 +135,7 @@ module YardGhurt
           end
         end
         # Do not check if ghp_dir exists because rsync may create it.
-        if @ghp_dir.nil?() || @ghp_dir.to_s().strip().empty?()
+        if @ghp_dir.nil? || @ghp_dir.to_s.strip.empty?
           raise ArgumentError,"#{self.class}.ghp_dir must be set"
         end
 

@@ -28,7 +28,7 @@ module YardGhurt
   ###
   module Util
     # @return [Array<String>] the lower-case Strings that will equal to +true+
-    TRUE_BOOLS = ['1','on','t','true','y','yes'].freeze()
+    TRUE_BOOLS = %w[ 1 on t true y yes ].freeze
 
     # If +include Util+ is called, extend {ClassMethods}.
     #
@@ -60,7 +60,7 @@ module YardGhurt
       # @see TRUE_BOOLS
       # @see GHPSyncTask#arg_names
       def to_bool(str)
-        return TRUE_BOOLS.include?(str.to_s().downcase())
+        return TRUE_BOOLS.include?(str.to_s.downcase)
       end
     end
 

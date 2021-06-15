@@ -14,7 +14,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'yard_ghurt/version'
 
-Gem::Specification.new() do |spec|
+Gem::Specification.new do |spec|
   spec.name        = 'yard_ghurt'
   spec.version     = YardGhurt::VERSION
   spec.authors     = ['Jonathan Bradley Whited']
@@ -39,8 +39,8 @@ Gem::Specification.new() do |spec|
   spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')}}",'**','*.{erb,rb}')) +
                Dir.glob(File.join(spec.bindir,'**',"{#{spec.executables.join(',')}}")) +
                Dir.glob(File.join('{test,yard}','**','*.{erb,rb}')) +
-               %W( Gemfile #{spec.name}.gemspec Rakefile ) +
-               %w( CHANGELOG.md LICENSE.txt README.md )
+               %W[ Gemfile #{spec.name}.gemspec Rakefile ] +
+               %w[ CHANGELOG.md LICENSE.txt README.md ]
 
   spec.required_ruby_version = '>= 2.1.10'
 
