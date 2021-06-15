@@ -102,14 +102,14 @@ YardGhurt::GFMFixTask.new() do |task|
   task.dry_run = false
   task.fix_code_langs = true
   task.md_files = ['index.html']
-  
+
   task.before = Proc.new() do |task,args|
     # Delete this file as it's never used (index.html is an exact copy)
     YardGhurt.rm_exist(File.join(task.doc_dir,'file.README.html'))
-    
+
     # Root dir of my GitHub Page for CSS/JS
     GHP_ROOT_DIR = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
-    
+
     task.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{GHP_ROOT_DIR}/css/prism.css" />)
     task.js_scripts << %Q(<script src="#{GHP_ROOT_DIR}/js/prism.js"></script>)
   end
@@ -138,7 +138,7 @@ YardGhurt::GFMFixTask.new(:yard_fix) do |task|
   task.js_scripts         << '<script>document.write("Hello World!");</script>'
   task.md_files            = ['index.html']
   task.verbose             = false
-  
+
   task.before = Proc.new() {|task,args| puts "Hi, #{args.name}!"}
   task.during = Proc.new() {|task,args,file| puts "#{args.name} can haz #{file}?"}
   task.after  = Proc.new() {|task,args| puts "Goodbye, #{args.name}!"}
@@ -171,7 +171,7 @@ YardGhurt::GHPSyncTask.new(:ghp_doc) do |task|
   task.strict       = true                       # Fail if doc_dir doesn't exist
   task.sync_args   << '--delete-after'
   task.sync_cmd     = '/usr/bin/rsync'
-  
+
   task.before = Proc.new() {|task,args| puts "Hi, #{args.name}!"}
   task.after  = Proc.new() {|task,args| puts "Goodbye, #{args.name}!"}
 end
@@ -365,7 +365,7 @@ Newline
 [GNU LGPL v3+](LICENSE.txt)
 
 > YardGhurt (<https://github.com/esotericpig/yard_ghurt>)  
-> Copyright (c) 2019-2020 Jonathan Bradley Whited (@esotericpig)  
+> Copyright (c) 2019-2021 Jonathan Bradley Whited  
 > 
 > YardGhurt is free software: you can redistribute it and/or modify  
 > it under the terms of the GNU Lesser General Public License as published by  
