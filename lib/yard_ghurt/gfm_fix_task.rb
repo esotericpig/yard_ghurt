@@ -337,14 +337,26 @@ module YardGhurt
 
       File.open(filename,'r') do |file|
         file.each_line do |line|
-          next if line !~ /<h\d+>/i
+          # +<h3 id="..."+ or +<h3...+
+          # - +yard_id+ was added for YARD v0.9.25+.
+          match = line.match(/<\s*h\d+.*?id\s*=\s*["'](?<yard_id>[^"']+)["']|<\s*h\d+[\s>]/ui)
+
+          next unless match
+
+          yard_id = nil
+          caps = match.named_captures
+
+          if caps.key?('yard_id')
+            yard_id = caps['yard_id'].to_s.strip
+            yard_id = nil if yard_id.empty?
+          end
 
           line.gsub!(/<[^>]+>/,'') # Remove tags: <...>
           line.strip!
 
           next if line.empty?
 
-          @anchor_links << line
+          @anchor_links.add_anchor(line,yard_id: yard_id)
         end
       end
 
@@ -482,10 +494,10 @@ module YardGhurt
       return false unless @fix_anchor_links
 
       has_change = false
-      tag = 'href="#'
 
-      line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |href|
-        link = href[tag.length..-2].strip
+      # +href="#..."+ or +href='#...'+
+      line.gsub!(/href\s*=\s*["']\s*#\s*(?<link>[^"']+)["']/ui) do |href|
+        link = Regexp.last_match[:link].to_s.strip # Same as +$~[:link]+.
 
         if link.empty? || @anchor_links.yard_anchor_id?(link)
           href
@@ -513,7 +525,7 @@ module YardGhurt
           else
             has_change = true
 
-            %Q(#{tag}#{yard_link}")
+            %Q(href="##{yard_link}")
           end
         end
       end

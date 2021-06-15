@@ -99,11 +99,14 @@ module YardGhurt
 
     # Convert +name+ (header text) to a GFM and YARDoc anchor ID and add the IDs to the database.
     #
-    # @param name [String] the name (header text) to convert to anchor IDs and add to the database
+    # @note +yard_id:+ was added in v1.2.1 for YARD v0.9.25+.
     #
+    # @param  name [String] the name (header text) to convert to anchor IDs and add to the database
     # @return [self]
-    def add_anchor(name)
-      store_anchor(to_github_anchor_id(name),to_yard_anchor_id(name))
+    def add_anchor(name,yard_id: nil)
+      yard_id = to_yard_anchor_id(name) if yard_id.nil?
+
+      store_anchor(to_github_anchor_id(name),yard_id)
 
       return self
     end
@@ -232,8 +235,9 @@ module YardGhurt
     # then the ID will be updated according to YARDoc rules,
     # which requires incrementing a common number variable.
     #
-    # The logic for this is pulled from +doc/app.js#generateTOC()+,
-    # which you can generate using +rake yard+ or +yardoc+ on the command line.
+    # The logic for this is pulled from +doc/app.js#generateTOC()+
+    # (or +doc/js/app.js+), which you can generate using +rake yard+
+    # or +yardoc+ on the command line.
     #
     # @note Be aware that this will increment a common number variable
     #       every time you call this with a duplicate.

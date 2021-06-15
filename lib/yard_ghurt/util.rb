@@ -30,6 +30,10 @@ module YardGhurt
     # @return [Array<String>] the lower-case Strings that will equal to +true+
     TRUE_BOOLS = %w[ 1 on t true y yes ].freeze
 
+    # @return a very flexible (non-strict) Semantic Versioning regex, ignoring pre-release/build-metadata
+    # @since  1.2.1
+    SEM_VER_REGEX = /(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?/.freeze
+
     # If +include Util+ is called, extend {ClassMethods}.
     #
     # @param mod [Module] the module to extend
@@ -38,6 +42,8 @@ module YardGhurt
     end
 
     module ClassMethods
+      @yard_sem_ver = nil
+
       # If +filename+ exists, delete it, and if +output+ is +true+, log it to stdout.
       #
       # @param filename [String] the file to remove
@@ -61,6 +67,62 @@ module YardGhurt
       # @see GHPSyncTask#arg_names
       def to_bool(str)
         return TRUE_BOOLS.include?(str.to_s.downcase)
+      end
+
+      # Parse +str+ as a non-strict Semantic Version:
+      #   \d+.\d+.\d+
+      #
+      # Unlike the specification, minor and patch are optional.
+      # Also, pre-release and build metadata are ignored.
+      # This is used for checking the YARD version internally,
+      # so needs to be very flexible.
+      #
+      # @param  str [String,Object] the object to parse; +to_s()+ will be called on it
+      # @return [Hash] the Semantic Version parts: +{:major, :minor, :patch}+
+      #                defaults all values to +0+ if the version cannot be parsed
+      # @see    SEM_VER_REGEX
+      # @see    #yard_sem_ver
+      # @since  1.2.1
+      def parse_sem_ver(str)
+        sem_ver = {
+          major: 0,minor: 0,patch: 0,
+        }
+
+        match = SEM_VER_REGEX.match(str.to_s.gsub(/\s+/u,''))
+
+        return sem_ver unless match
+
+        sem_ver[:major] = match[:major].to_i
+        sem_ver[:minor] = match[:minor].to_i unless match[:minor].nil?
+        sem_ver[:patch] = match[:patch].to_i unless match[:patch].nil?
+
+        return sem_ver
+      end
+
+      # Returns YARD's version as a +Hash+ of parts:
+      #   { major: 0, minor: 0, patch: 0 }
+      #
+      # If the version can not be parsed, it will return the exact
+      # same +Hash+ as above with all values to +0+.
+      #
+      # On initial call, it will parse it and store it.
+      # On subsequent calls, it will return the stored value.
+      #
+      # @return [Hash] YARD's version parts
+      # @see    parse_sem_ver
+      # @since  1.2.1
+      def yard_sem_ver
+        return @yard_sem_ver unless @yard_sem_ver.nil?
+
+        require 'yard'
+
+        if defined?(YARD::VERSION)
+          ver = YARD::VERSION
+        else
+          ver = ''
+        end
+
+        return(@yard_sem_ver = parse_sem_ver(ver))
       end
     end
 
