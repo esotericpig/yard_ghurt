@@ -25,27 +25,42 @@ Gem::Specification.new do |spec|
   spec.description = "#{spec.summary}. Fix GitHub Flavored Markdown (GFM) files."
 
   spec.metadata = {
+    'homepage_uri'      => 'https://github.com/esotericpig/yard_ghurt',
+    'source_code_uri'   => 'https://github.com/esotericpig/yard_ghurt',
     'bug_tracker_uri'   => 'https://github.com/esotericpig/yard_ghurt/issues',
     'changelog_uri'     => 'https://github.com/esotericpig/yard_ghurt/blob/master/CHANGELOG.md',
     'documentation_uri' => 'https://esotericpig.github.io/docs/yard_ghurt/yardoc/index.html',
-    'homepage_uri'      => 'https://github.com/esotericpig/yard_ghurt',
-    'source_code_uri'   => 'https://github.com/esotericpig/yard_ghurt'
   }
 
-  spec.require_paths = ['lib']
-  spec.bindir        = 'bin'
-  spec.executables   = [spec.name]
-
-  spec.files = Dir.glob(File.join("{#{spec.require_paths.join(',')}}",'**','*.{erb,rb}')) +
-               Dir.glob(File.join(spec.bindir,'**',"{#{spec.executables.join(',')}}")) +
-               Dir.glob(File.join('{test,yard}','**','*.{erb,rb}')) +
-               %W[ Gemfile #{spec.name}.gemspec Rakefile ] +
-               %w[ CHANGELOG.md LICENSE.txt README.md ]
-
   spec.required_ruby_version = '>= 2.1.10'
+  spec.require_paths         = ['lib']
+  spec.bindir                = 'bin'
+  spec.executables           = [spec.name]
 
-  spec.add_runtime_dependency 'rake' # 13.0.3
-  spec.add_runtime_dependency 'yard' # 0.9.26, 0.9.24 (diff)
+  spec.files = [
+    Dir.glob(File.join("{#{spec.require_paths.join(',')}}",'**','*.{erb,rb}')),
+    Dir.glob(File.join(spec.bindir,'*')),
+    Dir.glob(File.join('{samples,test,yard}','**','*.{erb,rb}')),
+    %W[ Gemfile #{spec.name}.gemspec Rakefile .yardopts ],
+    %w[ LICENSE.txt CHANGELOG.md README.md ],
+  ].flatten
+
+  # Test using different Gem versions:
+  #   GST=1 bundle update && bundle exec rake doc
+  gemspec_test = ENV.fetch('GST','').to_s.strip
+  yard_gemv = false
+
+  if !gemspec_test.empty?
+    case gemspec_test
+    when '1' then yard_gemv = '0.9.24'
+    end
+
+    puts 'Using Gem versions:'
+    puts "  yard: #{yard_gemv.inspect}"
+  end
+
+  spec.add_runtime_dependency 'rake'                      # 13.0.3
+  spec.add_runtime_dependency 'yard',yard_gemv || '>= 0'  # 0.9.26, 0.9.24 (diff)
 
   spec.add_development_dependency 'bundler'  ,'~> 2.2'
   spec.add_development_dependency 'rdoc'     ,'~> 6.3'  # For RDoc for YARD (*.rb)

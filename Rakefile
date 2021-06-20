@@ -16,6 +16,8 @@ CLEAN.exclude('.git/','stock/')
 CLOBBER.include('doc/')
 
 
+# To test using different Gem versions:
+#   GST=1 bundle update && bundle exec rake doc
 desc 'Generate documentation (YARDoc)'
 task :doc,%i[] => %i[ yard yard_gfm_fix ] do |task|
   # pass
@@ -23,12 +25,6 @@ end
 
 YARD::Rake::YardocTask.new do |task|
   task.files = [File.join('lib','**','*.rb')]
-
-  task.options += ['--files','CHANGELOG.md,LICENSE.txt,TODO.md']
-  task.options += ['--readme','README.md']
-
-  task.options << '--protected' # Show protected methods
-  task.options += ['--template-path',File.join('yard','templates')]
   task.options += ['--title',"YardGhurt v#{YardGhurt::VERSION} Doc"]
 end
 
