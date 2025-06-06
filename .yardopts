@@ -1,4 +1,5 @@
---files 'LICENSE.txt,CHANGELOG.md,TODO.md'
+--charset 'UTF-8'
+--embed-mixins
+--files 'LICENSE.txt,TODO.md'
 --protected
 --readme 'README.md'
---template-path 'yard/templates'

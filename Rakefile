@@ -27,14 +27,14 @@ YardGhurt::GFMFixTask.new do |task|
   task.dry_run = false
   task.fix_code_langs = true
 
-  task.before = proc do |t2,args|
+  task.before = proc do |task2,args|
     # NOTE: Do not delete `file.README.html`, as we need it for testing.
 
     # Root dir of my GitHub Page for CSS/JS.
     ghp_root_dir = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
 
-    t2.css_styles << %(<link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />)
-    t2.js_scripts << %(<script src="#{ghp_root_dir}/js/prism.js"></script>)
+    task2.css_styles << %(<link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />)
+    task2.js_scripts << %(<script src="#{ghp_root_dir}/js/prism.js"></script>)
   end
 end
 
