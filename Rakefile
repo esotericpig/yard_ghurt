@@ -1,46 +1,40 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-
 require 'bundler/gem_tasks'
 
 require 'rake/clean'
-
 require 'yard'
 require 'yard_ghurt'
 
+task default: %i[doc]
 
-task default: [:doc]
-
-CLEAN.exclude('.git/','stock/')
+CLEAN.exclude('.git/','.github/','.idea/','stock/')
 CLOBBER.include('doc/')
 
-
-# To test using different Gem versions:
-#   GST=1 bundle update && bundle exec rake doc
-desc 'Generate documentation (YARDoc)'
-task :doc,%i[] => %i[ yard yard_gfm_fix ] do |task|
-  # pass
-end
+# TEST: To test using different Gem versions:
+#         GST=1 bundle update && bundle exec rake doc
+desc 'Generate doc'
+task doc: %i[yard yard_gfm_fix]
 
 YARD::Rake::YardocTask.new do |task|
-  task.files = [File.join('lib','**','*.rb')]
-  task.options += ['--title',"YardGhurt v#{YardGhurt::VERSION} Doc"]
+  task.files = ['lib/**/*.rb']
+  task.options.push('--title',"YardGhurt v#{YardGhurt::VERSION}")
 end
 
 YardGhurt::GFMFixTask.new do |task|
-  task.arg_names = %i[ dev ]
+  task.arg_names = %i[dev]
   task.dry_run = false
   task.fix_code_langs = true
 
   task.before = proc do |t2,args|
-    # Do not delete 'file.README.html', as we need it for testing.
+    # NOTE: Do not delete `file.README.html`, as we need it for testing.
 
-    # Root dir of my GitHub Page for CSS/JS
+    # Root dir of my GitHub Page for CSS/JS.
     ghp_root_dir = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
 
-    t2.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />)
-    t2.js_scripts << %Q(<script src="#{ghp_root_dir}/js/prism.js"></script>)
+    t2.css_styles << %(<link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />)
+    t2.js_scripts << %(<script src="#{ghp_root_dir}/js/prism.js"></script>)
   end
 end
 
