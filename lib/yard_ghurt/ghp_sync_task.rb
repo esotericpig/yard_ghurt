@@ -3,47 +3,25 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2019-2021 Jonathan Bradley Whited
+# Copyright (c) 2019 Bradley Whited
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #++
 
-
 require 'rake'
-
 require 'rake/tasklib'
-
 require 'yard_ghurt/util'
 
 module YardGhurt
-  ###
   # Sync YARDoc to a local GitHub Pages repo (uses +rsync+ by default).
   #
   # @example What I Use
-  #   YardGhurt::GHPSyncTask.new() do |task|
+  #   YardGhurt::GHPSyncTask.new do |task|
   #     task.ghp_dir = '../esotericpig.github.io/docs/yard_ghurt/yardoc'
   #     task.sync_args << '--delete-after'
   #   end
   #
-  # @example Using All Options
-  #   # Execute: rake ghp_doc[false,'Ruby']
-  #   YardGhurt::GHPSyncTask.new(:ghp_doc) do |task|
-  #     task.arg_names   << :name                      # Custom args
-  #     task.deps        << :yard                      # Custom dependencies
-  #     task.description  = 'Rsync my_doc/ to my page'
-  #     task.doc_dir      = 'my_doc'                   # YARDoc directory of generated files
-  #     task.ghp_dir      = '../dest_dir/my_page'
-  #     task.strict       = true                       # Fail if doc_dir doesn't exist
-  #     task.sync_args   << '--delete-after'
-  #     task.sync_cmd     = '/usr/bin/rsync'
-  #
-  #     task.before = Proc.new() {|task,args| puts "Hi, #{args.name}!"}
-  #     task.after  = Proc.new() {|task,args| puts "Goodbye, #{args.name}!"}
-  #   end
-  #
-  # @author Jonathan Bradley Whited
-  # @since  1.1.0
-  ###
+  # @since 1.1.0
   class GHPSyncTask < Rake::TaskLib
     # @return [Proc,nil] the Proc ( +respond_to?(:call)+ ) to call at the end of this task or +nil+;
     #                    default: +nil+
@@ -97,7 +75,7 @@ module YardGhurt
     alias_method :strict?,:strict
 
     # @param name [Symbol] the name of this task to use on the command line with +rake+
-    def initialize(name=:yard_ghp_sync)
+    def initialize(name = :yard_ghp_sync)
       super()
 
       @after = nil
@@ -112,7 +90,7 @@ module YardGhurt
       @sync_args = ['-ahv','--progress']
       @sync_cmd = 'rsync'
 
-      yield self if block_given?
+      yield(self) if block_given?
       define
     end
 
@@ -122,17 +100,16 @@ module YardGhurt
       @arg_names.unshift(:deploy) unless @arg_names.include?(:deploy)
 
       desc @description
-      task @name,@arg_names => Array(@deps) do |task,args|
+      task @name,@arg_names => Array(@deps) do |_task,args|
         deploy = Util.to_bool(args.deploy)
 
         @before.call(self,args) if @before.respond_to?(:call)
 
-        # Without these checks, sh raises some pretty cryptic errors.
-        if @strict
-          # If you want to use a non-local dir, set strict to false.
-          if !File.exist?(@doc_dir)
-            raise ArgumentError,%Q(#{self.class}.doc_dir [#{@doc_dir}] does not exist; execute "rake yard"?)
-          end
+        # Without the below checks, sh() raises some pretty cryptic errors.
+
+        # If you want to use a non-local dir, set strict to false.
+        if @strict && !File.exist?(@doc_dir)
+          raise ArgumentError,%(#{self.class}.doc_dir [#{@doc_dir}] does not exist; execute "rake yard"?)
         end
         # Do not check if ghp_dir exists because rsync may create it.
         if @ghp_dir.nil? || @ghp_dir.to_s.strip.empty?
@@ -143,7 +120,7 @@ module YardGhurt
 
         if !deploy
           puts
-          puts %Q(Execute "rake #{@name}[true]" for actually deploying (not a dry-run))
+          puts %(Execute "rake #{@name}[true]" for actually deploying (not a dry-run))
         end
 
         @after.call(self,args) if @after.respond_to?(:call)

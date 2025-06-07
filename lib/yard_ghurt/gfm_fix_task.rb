@@ -3,22 +3,18 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2019-2021 Jonathan Bradley Whited
+# Copyright (c) 2019 Bradley Whited
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #++
 
-
 require 'rake'
-require 'set'
-
 require 'rake/tasklib'
-
+require 'set'
 require 'yard_ghurt/anchor_links'
 require 'yard_ghurt/util'
 
 module YardGhurt
-  ###
   # Fix (find & replace) text in the GitHub Flavored Markdown (GFM) files in the YARDoc directory,
   # for differences between the two formats.
   #
@@ -26,53 +22,27 @@ module YardGhurt
   #   rake yard_gfm_fix dryrun=true
   #
   # @example What I Use
-  #   YardGhurt::GFMFixTask.new() do |task|
+  #   YardGhurt::GFMFixTask.new do |task|
   #     task.arg_names = [:dev]
   #     task.dry_run = false
   #     task.fix_code_langs = true
   #     task.md_files = ['index.html']
   #
-  #     task.before = Proc.new() do |t2,args|
-  #       # Delete this file as it's never used (index.html is an exact copy)
-  #       YardGhurt.rm_exist(File.join(t2.doc_dir,'file.README.html'))
+  #     task.before = proc do |task2,args|
+  #       # Delete this file as it's never used (`index.html` is an exact copy).
+  #       YardGhurt.rm_exist(File.join(task2.doc_dir,'file.README.html'))
   #
-  #       # Root dir of my GitHub Page for CSS/JS
+  #       # Root dir of my GitHub Page for CSS/JS.
   #       ghp_root_dir = YardGhurt.to_bool(args.dev) ? '../../esotericpig.github.io' : '../../..'
   #
-  #       t2.css_styles << %Q(<link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />)
-  #       t2.js_scripts << %Q(<script src="#{ghp_root_dir}/js/prism.js"></script>)
+  #       task2.css_styles << %(
+  #         <link rel="stylesheet" type="text/css" href="#{ghp_root_dir}/css/prism.css" />
+  #       )
+  #       task2.js_scripts << %(<script src="#{ghp_root_dir}/js/prism.js"></script>)
   #     end
   #   end
   #
-  # @example Using All Options
-  #   YardGhurt::GFMFixTask.new(:yard_fix) do |task|
-  #     task.anchor_db           = {'tests' => 'Testing'} # #tests => #Testing
-  #     task.arg_names          << :name # Custom args
-  #     task.css_styles         << '<link rel="stylesheet" href="css/my_css.css" />' # Inserted at </head>
-  #     task.css_styles         << '<style>body{ background-color: linen; }</style>'
-  #     task.custom_gsub         = Proc.new() {|line| !line.gsub!('YardGhurt','YARD GHURT!').nil?()}
-  #     task.custom_gsubs       << [/newline/i,'Do you smell what The Rock is cooking?']
-  #     task.deps               << :yard # Custom dependencies
-  #     task.description         = 'Fix it'
-  #     task.doc_dir             = 'doc'
-  #     task.dry_run             = false
-  #     task.exclude_code_langs  = Set['ruby']
-  #     task.fix_anchor_links    = true
-  #     task.fix_code_langs      = true
-  #     task.fix_file_links      = true
-  #     task.js_scripts         << '<script src="js/my_js.js"></script>' # Inserted at </body>
-  #     task.js_scripts         << '<script>document.write("Hello World!");</script>'
-  #     task.md_files            = ['index.html']
-  #     task.verbose             = false
-  #
-  #     task.before = Proc.new() {|task,args| puts "Hi, #{args.name}!"}
-  #     task.during = Proc.new() {|task,args,file| puts "#{args.name} can haz #{file}?"}
-  #     task.after  = Proc.new() {|task,args| puts "Goodbye, #{args.name}!"}
-  #   end
-  #
-  # @author Jonathan Bradley Whited
-  # @since  1.1.0
-  ###
+  # @since 1.1.0
   class GFMFixTask < Rake::TaskLib
     # This is important so that a subsequent call to this task will not write the CSS again.
     #
@@ -93,7 +63,7 @@ module YardGhurt
     #
     #   # @param task [self]
     #   # @param args [Rake::TaskArguments] the args specified by {arg_names}
-    #   task.after = Proc.new do |task,args|
+    #   task.after = proc do |task,args|
     #     puts args.dev
     #   end
     #
@@ -120,7 +90,7 @@ module YardGhurt
     #
     #   # @param task [self]
     #   # @param args [Rake::TaskArguments] the args specified by {arg_names}
-    #   task.before = Proc.new do |task,args|
+    #   task.before = proc do |task,args|
     #     puts args.dev
     #   end
     #
@@ -141,10 +111,10 @@ module YardGhurt
     #   # @param line [String] the current line being processed from the current file
     #   #
     #   # @return [true,false] whether there was a change
-    #   task.custom_gsub = Proc.new do |line|
+    #   task.custom_gsub = proc do |line|
     #     has_change = false
     #
-    #     has_change = !line.gsub!('dev','prod').nil?() || has_change
+    #     has_change = !line.gsub!('dev','prod').nil? || has_change
     #     # More changes...
     #
     #     return has_change
@@ -191,7 +161,7 @@ module YardGhurt
     #   # @param task [self]
     #   # @param args [Rake::TaskArguments] the args specified by {arg_names}
     #   # @param file [String] the current file being processed
-    #   task.during = Proc.new do |task,args,file|
+    #   task.during = proc do |task,args,file|
     #     puts args.dev
     #   end
     #
@@ -259,7 +229,7 @@ module YardGhurt
     alias_method :verbose?,:verbose
 
     # @param name [Symbol] the name of this task to use on the command line with +rake+
-    def initialize(name=:yard_gfm_fix)
+    def initialize(name = :yard_gfm_fix)
       super()
 
       @after = nil
@@ -283,7 +253,7 @@ module YardGhurt
       @name = name
       @verbose = true
 
-      yield self if block_given?
+      yield(self) if block_given?
       define
     end
 
@@ -298,7 +268,7 @@ module YardGhurt
     # Define the Rake task and description using the instance variables.
     def define
       desc @description
-      task @name,Array(@arg_names) => Array(@deps) do |task,args|
+      task @name,Array(@arg_names) => Array(@deps) do |_task,args|
         env_dryrun = ENV['dryrun']
 
         if !env_dryrun.nil? && !(env_dryrun = env_dryrun.to_s.strip).empty?
@@ -390,14 +360,14 @@ module YardGhurt
 
           has_change = false
 
-          # Standard
+          # Standard.
           has_change = add_css_styles!(line) || has_change
           has_change = add_js_scripts!(line) || has_change
           has_change = gsub_anchor_links!(line) || has_change
           has_change = gsub_code_langs!(line) || has_change
           has_change = gsub_local_file_links!(line) || has_change
 
-          # Custom
+          # Custom.
           has_change = gsub_customs!(line) || has_change
           has_change = gsub_custom!(line) || has_change
 
@@ -506,14 +476,14 @@ module YardGhurt
 
           if yard_link.nil?
             # Either the GFM link is wrong [check with @anchor_links.to_github_anchor_id()]
-            #   or the internal code is broken [check with @anchor_links.to_s()]
+            #   or the internal code is broken [check with @anchor_links.to_s()].
             puts "! YARDoc anchor link for GFM anchor link [#{link}] does not exist"
 
             if !@has_verbose_anchor_links
               if @verbose
                 puts '  GFM anchor link in the Markdown file is wrong?'
                 puts '  Please check the generated links:'
-                puts %Q(  #{@anchor_links.to_s.strip.gsub("\n","\n  ")})
+                puts %(  #{@anchor_links.to_s.strip.gsub("\n","\n  ")})
               else
                 puts "  Turn on #{self.class}.verbose for more info"
               end
@@ -525,7 +495,7 @@ module YardGhurt
           else
             has_change = true
 
-            %Q(href="##{yard_link}")
+            %(href="##{yard_link}")
           end
         end
       end
@@ -543,22 +513,22 @@ module YardGhurt
       has_change = false
       tag = 'code class="'
 
-      line.gsub!(Regexp.new(Regexp.quote(tag) + '[^"]*"')) do |code_class|
+      line.gsub!(Regexp.new(%(#{Regexp.quote(tag)}[^"]*"))) do |code_class|
         lang = code_class[tag.length..-2].strip
 
-        if lang.empty? || lang =~ /^language\-/ || @exclude_code_langs.include?(lang)
+        if lang.empty? || lang =~ /^language-/ || @exclude_code_langs.include?(lang)
           code_class
         else
           has_change = true
 
-          %Q(#{tag}language-#{lang.downcase}")
+          %(#{tag}language-#{lang.downcase}")
         end
       end
 
       return has_change
     end
 
-    # Call the custom Proc {custom_gsub} (if it responds to +:call+) on +line+,
+    # Call the custom Proc {custom_gsub} (if it responds to +:call+) on +line+.
     #
     # @param line [String] the line from the file to fix
     def gsub_custom!(line)
@@ -596,7 +566,7 @@ module YardGhurt
       has_change = false
       tag = 'href="'
 
-      line.gsub!(Regexp.new(Regexp.quote(tag) + '[^#][^"]*"')) do |href|
+      line.gsub!(Regexp.new(%(#{Regexp.quote(tag)}[^#][^"]*"))) do |href|
         link = href[tag.length..-2].strip
 
         if link.empty? || !File.exist?(link)
@@ -605,7 +575,7 @@ module YardGhurt
           link = File.basename(link,'.*')
           has_change = true
 
-          %Q(#{tag}file.#{link}.html")
+          %(#{tag}file.#{link}.html")
         end
       end
 

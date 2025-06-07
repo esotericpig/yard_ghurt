@@ -3,67 +3,29 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2019-2021 Jonathan Bradley Whited
+# Copyright (c) 2019 Bradley Whited
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #++
-
 
 require 'set'
 require 'uri'
 
 module YardGhurt
-  ###
   # A "database" of anchor links specific to GitHub Flavored Markdown (GFM) & YARDoc.
   #
   # You can use this by itself to view what anchor IDs would be generated:
-  #   al = YardGhurt::AnchorLinks.new()
+  #   al = YardGhurt::AnchorLinks.new
   #
-  #   puts al.to_github_anchor_id('This is a test!')
-  #   puts al.to_yard_anchor_id('This is a test!')
-  #
-  #   # Output:
-  #   # ---
-  #   # this-is-a-test
-  #   # This_is_a_test_
+  #   puts al.to_github_anchor_id('This is a test!') #=> this-is-a-test
+  #   puts al.to_yard_anchor_id('This is a test!')   #=> This_is_a_test_
   #
   # Be aware that YARDoc depends on a common number that will be incremented for all duplicates,
-  # while GFM's number is only local to each specific duplicate:
-  #   al = YardGhurt::AnchorLinks.new()
-  #   name = 'This is a test!'
+  # while GFM's number is only local to each duplicate.
   #
-  #   puts al.to_yard_anchor_id(name)   # This_is_a_test_
-  #   puts al.to_yard_anchor_id(name)   # This_is_a_test_
-  #
-  #   puts al.to_github_anchor_id(name) # this-is-a-test
-  #   puts al.to_github_anchor_id(name) # this-is-a-test
-  #
-  #   al << name # Officially add it to the database
-  #
-  #   # Instead of being 0 & 0, will be 0 & 1 (incremented),
-  #   #   even without being added to the database
-  #   puts al.to_yard_anchor_id(name)   # This_is_a_test_0
-  #   puts al.to_yard_anchor_id(name)   # This_is_a_test_1
-  #
-  #   puts al.to_github_anchor_id(name) # this-is-a-test-1
-  #   puts al.to_github_anchor_id(name) # this-is-a-test-1
-  #
-  #   name = 'This is another test!'
-  #   al << name # Officially add it to the database
-  #
-  #   # Instead of being 0 & 1, will be 2 & 3 (global increment),
-  #   #   even without being added to the database
-  #   puts al.to_yard_anchor_id(name)   # This_is_another_test_2
-  #   puts al.to_yard_anchor_id(name)   # This_is_another_test_3
-  #
-  #   puts al.to_github_anchor_id(name) # this-is-another-test-1
-  #   puts al.to_github_anchor_id(name) # this-is-another-test-1
-  #
-  # @author Jonathan Bradley Whited
-  # @since  1.0.0
+  # @since 1.0.0
   #
   # @see GFMFixTask
-  ###
   class AnchorLinks
     # @return [Hash] the GFM-style anchor IDs pointing to their YARDoc ID equivalents that have been added
     attr_reader :anchor_ids
@@ -75,7 +37,7 @@ module YardGhurt
     attr_accessor :yard_dup_num
 
     def initialize
-      super()
+      super
       reset
     end
 
@@ -101,7 +63,7 @@ module YardGhurt
     #
     # @note +yard_id:+ was added in v1.2.1 for YARD v0.9.25+.
     #
-    # @param  name [String] the name (header text) to convert to anchor IDs and add to the database
+    # @param name [String] the name (header text) to convert to anchor IDs and add to the database
     # @return [self]
     def add_anchor(name,yard_id: nil)
       yard_id = to_yard_anchor_id(name) if yard_id.nil?
@@ -119,9 +81,9 @@ module YardGhurt
     #
     # @return [String] the escaped string
     #
-    # @since  1.2.0
+    # @since 1.2.0
     def self.escape(str)
-      # URI.escape()/encode() is obsolete
+      # URI.escape()/encode() is obsolete.
       return URI.encode_www_form_component(str)
     end
 
@@ -202,7 +164,7 @@ module YardGhurt
         id.downcase!
       end
 
-      id = self.class.escape(id) # For non-English languages
+      id = self.class.escape(id) # For non-English languages.
 
       # Duplicates
       dup_num = 1
@@ -251,9 +213,9 @@ module YardGhurt
       id.strip!
       id.gsub!(/&[^;]+;/,'_') # Replace entities: &...;
       id.gsub!(/[^a-z0-9-]/i,'_')
-      id = self.class.escape(id) # For non-English languages
+      id = self.class.escape(id) # For non-English languages.
 
-      # Duplicates
+      # Duplicates.
       orig_id = id.dup
 
       while @yard_anchor_ids.include?(id)

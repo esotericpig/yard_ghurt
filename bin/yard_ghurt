@@ -4,14 +4,12 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2020-2021 Jonathan Bradley Whited
+# Copyright (c) 2020 Bradley Whited
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #++
 
-
 require 'yard_ghurt'
-
 
 # @since 1.2.0
 yg = YardGhurt::App.new

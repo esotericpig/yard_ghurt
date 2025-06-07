@@ -116,7 +116,7 @@ YardGhurt::GFMFixTask.new do |task|
 end
 ```
 
-**Example of using all options:**
+**All options:**
 
 ```ruby
 YardGhurt::GFMFixTask.new(:yard_fix) do |task|
@@ -158,7 +158,7 @@ YardGhurt::GHPSyncTask.new do |task|
 end
 ```
 
-**Using all options:**
+**All options:**
 
 ```ruby
 # Execute: rake ghp_doc[false,'Custom']
@@ -315,7 +315,7 @@ It should output this:
 = Nothing written (up-to-date)
 ```
 
-Then open up **doc/index.html** and check all the [anchor links](#tests), [local file links](#license), etc.
+Then open up [doc/index.html](doc/index.html) and check all the [anchor links](#-tests), [local file links](#-license), etc.
 
 Lastly, the 2 files should be almost identical, except for 1 line:
 

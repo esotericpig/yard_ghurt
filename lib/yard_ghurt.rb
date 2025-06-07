@@ -3,11 +3,10 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2019-2021 Jonathan Bradley Whited
+# Copyright (c) 2019 Bradley Whited
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #++
-
 
 require 'optparse'
 require 'yard_ghurt/anchor_links'
@@ -16,30 +15,23 @@ require 'yard_ghurt/ghp_sync_task'
 require 'yard_ghurt/util'
 require 'yard_ghurt/version'
 
-
-###
 # YARDoc GitHub Rake Tasks
 #
-# @author Jonathan Bradley Whited
-# @since  1.0.0
-###
+# @since 1.0.0
 module YardGhurt
   # Internal code should use +Util.+!
   # See {Util} for details.
   include Util
 
-  ###
   # A simple CLI app used in file +bin/yard_ghurt+.
   #
   # Mainly for getting GitHub/YARDoc anchor link IDs.
   #
-  # @author Jonathan Bradley Whited
-  # @since  1.2.0
-  ###
+  # @since 1.2.0
   class App
     attr_reader :args
 
-    def initialize(args=ARGV)
+    def initialize(args = ARGV)
       super()
 
       @args = args
@@ -69,20 +61,20 @@ module YardGhurt
           exit
         end
 
-        op.separator op.summary_indent + '---'
+        op.separator("#{op.summary_indent}---")
 
-        op.on_tail('-h','--help','Print this help') do
+        op.on_tail('-h','--help','Show help') do
           puts op
           exit
         end
-        op.on_tail('-v','--version','Print the version') do
+        op.on_tail('-v','--version','Show version') do
           puts "#{op.program_name} v#{op.version}"
           exit
         end
       end
 
       parser.parse!(@args)
-      puts parser # Print help if nothing was parsed
+      puts parser # Print help if nothing was parsed.
     end
   end
 end

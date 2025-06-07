@@ -3,14 +3,12 @@
 
 #--
 # This file is part of YardGhurt.
-# Copyright (c) 2019-2021 Jonathan Bradley Whited
+# Copyright (c) 2019 Bradley Whited
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #++
 
-
 module YardGhurt
-  ###
   # Utility methods in a separate module/mixin,
   # so that a programmer can require/load a sole task:
   #   require 'yard_ghurt/gfm_fix_task'
@@ -23,15 +21,13 @@ module YardGhurt
   # External code can either use this module or {YardGhurt},
   # which includes this module as a mixin.
   #
-  # @author Jonathan Bradley Whited
-  # @since  1.0.0
-  ###
+  # @since 1.0.0
   module Util
     # @return [Array<String>] the lower-case Strings that will equal to +true+
-    TRUE_BOOLS = %w[ 1 on t true y yes ].freeze
+    TRUE_BOOLS = %w[1 on t true y yes].freeze
 
     # @return a very flexible (non-strict) Semantic Versioning regex, ignoring pre-release/build-metadata
-    # @since  1.2.1
+    # @since 1.2.1
     SEM_VER_REGEX = /(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?/.freeze
 
     # If +include Util+ is called, extend {ClassMethods}.
@@ -48,7 +44,7 @@ module YardGhurt
       #
       # @param filename [String] the file to remove
       # @param output [true,false] whether to log it to stdout
-      def rm_exist(filename,output=true)
+      def rm_exist(filename,output = true)
         return unless File.exist?(filename)
 
         puts "[#{filename}]: - Deleted" if output
@@ -77,12 +73,12 @@ module YardGhurt
       # This is used for checking the YARD version internally,
       # so needs to be very flexible.
       #
-      # @param  str [String,Object] the object to parse; +to_s()+ will be called on it
+      # @param str [String,Object] the object to parse; +to_s()+ will be called on it
       # @return [Hash] the Semantic Version parts: +{:major, :minor, :patch}+
       #                defaults all values to +0+ if the version cannot be parsed
-      # @see    SEM_VER_REGEX
-      # @see    #yard_sem_ver
-      # @since  1.2.1
+      # @see SEM_VER_REGEX
+      # @see #yard_sem_ver
+      # @since 1.2.1
       def parse_sem_ver(str)
         sem_ver = {
           major: 0,minor: 0,patch: 0,
@@ -109,20 +105,16 @@ module YardGhurt
       # On subsequent calls, it will return the stored value.
       #
       # @return [Hash] YARD's version parts
-      # @see    parse_sem_ver
-      # @since  1.2.1
+      # @see parse_sem_ver
+      # @since 1.2.1
       def yard_sem_ver
         return @yard_sem_ver unless @yard_sem_ver.nil?
 
         require 'yard'
 
-        if defined?(YARD::VERSION)
-          ver = YARD::VERSION
-        else
-          ver = ''
-        end
+        @yard_sem_ver = parse_sem_ver(defined?(YARD::VERSION) ? YARD::VERSION : '')
 
-        return(@yard_sem_ver = parse_sem_ver(ver))
+        return @yard_sem_ver
       end
     end
 
