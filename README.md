@@ -339,17 +339,17 @@ These are actual tests for this gem.
 - [中文？](#中文)
 - [汉语？](#汉语)
 
-### [This is Test #1](#tests)
-### [This-is-Test-#2](#tests)
-### [This_is_Test_#3](#tests)
-### ["This is Test #4"](#tests)
-### ["This is Test #4"](#tests)
-### [this is test #5](#tests)
-### [THIS IS TEST #6](#tests)
-### [日本語？](#tests)
-### [テスト？](#tests)
-### [中文？](#tests)
-### [汉语？](#tests)
+### [This is Test #1](#-tests)
+### [This-is-Test-#2](#-tests)
+### [This_is_Test_#3](#-tests)
+### ["This is Test #4"](#-tests)
+### ["This is Test #4"](#-tests)
+### [this is test #5](#-tests)
+### [THIS IS TEST #6](#-tests)
+### [日本語？](#-tests)
+### [テスト？](#-tests)
+### [中文？](#-tests)
+### [汉语？](#-tests)
 
 ```
 Newline
