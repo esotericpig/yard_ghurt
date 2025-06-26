@@ -9,7 +9,7 @@ require 'yard_ghurt'
 
 task default: %i[doc]
 
-CLEAN.exclude('.git/','.github/','.idea/','stock/')
+CLEAN.exclude('{.git,.github,.idea,stock}/**/*')
 CLOBBER.include('doc/')
 
 # TEST: To test using different Gem versions:
